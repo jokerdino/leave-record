@@ -33,15 +33,14 @@ def create_employee():
         "employee number" : employeeNumber,
         "casual leave": casualLeave,
         "earned leave" : earnedLeave,
-        "sick leave" : sickleave
+        "sick leave" : sickleave,
+        "casual leave list": []
         }
         }
 
 )
 
 def update_casual_leave(employeenumber, casualLeave):
-    #employeeNumber = input("Enter employee number: ")
-    #casualLeave = input("Enter new casual leave: ")
     currentCLbalance = d[employeenumber]['casual leave']
     newCLbalance = int(currentCLbalance) - casualLeave
     d[employeenumber]['casual leave'] = newCLbalance
@@ -54,7 +53,6 @@ def add_casual_leave(employeenumber):
     start_cl_date = datetime.datetime.strptime(start_cl, "%Y-%m-%d")
     end_cl = input("Enter end date: ")
     end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
-    #no_of_days = end_cl_date - start_cl_date + 1
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
     print(no_of_days)
     update_casual_leave(employeenumber, no_of_days)
@@ -63,7 +61,6 @@ def add_casual_leave(employeenumber):
     if end_cl_date == start_cl_date:
         start_cl_date_string = start_cl_date.strftime('%d/%m/%y')
         casual_leave_list_string.append(start_cl_date_string)
-        print(casual_leave_list_string)
     else:
        for dt in daterange(start_cl_date, end_cl_date):
            casual_leave_list.append(dt)
@@ -71,18 +68,14 @@ def add_casual_leave(employeenumber):
         date_string = dt.strftime('%d/%m/%y')
         casual_leave_list_string.append(date_string)
     print(casual_leave_list_string)
-    print(d[employeenumber])
     d[employeenumber]['casual leave list'] = casual_leave_list_string
 
-#options = input("What do you want to do?")
 
 options = input("Choose your options: Press 1 for creating new employee master. Press 2 for adding casual leave. Press 3 for displaying current leave status. Press 4 for displaying all employees and their current leave status.")
 
 
 if options == "1":
     create_employee()
-#if options == "2":
-    update_casual_leave()
 if options == "3":
     employeenumber = input("Enter number to display current status: ")
     print(d[employeenumber])
