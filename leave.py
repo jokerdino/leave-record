@@ -28,13 +28,20 @@ def create_employee():
     casualLeave = input("Enter current casual leave: ")
     earnedLeave = input("Enter current earned leave: ")
     sickleave = input("Enter current sick leave: ")
+    RH = input("Enter current RH count: ")
     d.update({employeeNumber:{
         "name": employeeName,
         "employee number" : employeeNumber,
         "casual leave": casualLeave,
         "earned leave" : earnedLeave,
         "sick leave" : sickleave,
-        "casual leave list": []
+        "RH": RH,
+        "casual leave list": [],
+        "RH list": [],
+        "Earned leave list": [],
+        "Sick leave list": [],
+        "Quarantine leave list":[],
+        "Special leave list":[]
         }
         }
 
