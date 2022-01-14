@@ -1,31 +1,11 @@
 import json
 
-#print("Hello")
-
-#employee = input("Enter name of employee: ")
-
-#employeeList = []
-
-#employeeList.append(employee)
-
-
-
-d = dict(dict())
  
-a_file = open("data.json","r")
-d = a_file.read()
+f = open('data.json')
+d = json.load(f)
 
+print(len(d))
 print(d)
-
-
-
-#d = {
- #   "Barneedhar" : {
-  #      "name": "Barneedhar",
-   #     "employee number": 44515,
-    #    "casual leave": 12
-    #}
-#}
 
 def create_employee():
     employeeName = input("Enter name of the employee: ")
@@ -44,25 +24,16 @@ def create_employee():
 
 )
 create_employee()
-#d.update({employee:""})
-
-
-#for i in employeeList:
- #   d[i] = None
-
-print(d)
-
-#print(employeeList)
-
 
 a_file = open("data.json", "w")
 json.dump(d,a_file)
 
 a_file.close()
 
-a_file = open("data.json", "r")
-output = a_file.read()
+print(d)
+#a_file = open("data.json", "r")
+#output = a_file.read()
 
-print(output)
+#print(output)
 
-a_file.close()
+#a_file.close()
