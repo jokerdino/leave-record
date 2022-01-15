@@ -58,6 +58,7 @@ def create_employee():
         "sick leave" : sickleave,
         "RH": RH,
         "casual leave list": [],
+        "casual leave dict": {},
         "RH list": [],
         "Earned leave list": [],
         "Sick leave list": [],
@@ -78,39 +79,47 @@ def update_casual_leave(employeenumber, casualLeave):
 
 
 def add_casual_leave(employeenumber):
+    
     print("Current CL count for employee", d[employeenumber]['casual leave'])
-    casual_leave_count = d[employeenumber]['casual leave'] * 2
+    #casual_leave_count = d[employeenumber]['casual leave'] * 2
 
     type_CL = input("Enter whether full or half CL: ")
 
     start_cl = input("Enter start date in yyyy-mm-dd format: ")
     start_cl_date = datetime.datetime.strptime(start_cl, "%Y-%m-%d")
     end_cl = input("Enter end date: ")
+    
     if end_cl != "":
         end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
     else:
         end_cl_date = start_cl_date
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
-    #print(no_of_days)
+    
     if type_CL == "full":
         update_casual_leave(employeenumber, no_of_days)
     elif type_CL == "half":
-     #   print(no_of_days)
         update_casual_leave(employeenumber, no_of_days/2)
-      #  print(no_of_days / 2)
+    
     casual_leave_list = []
     casual_leave_list_string = d[employeenumber]['casual leave list']
+    dict_casual_leave = d[employeenumber]['casual leave dict']
     if end_cl_date == start_cl_date:
         start_cl_date_string = start_cl_date.strftime('%d/%m/%y')
         casual_leave_list_string.append(start_cl_date_string + " ("+type_CL+")")
+        dict_casual_leave['casual leave dict'].update({start_cl_date_string: type_CL})
     else:
        for dt in daterange(start_cl_date, end_cl_date):
            casual_leave_list.append(dt)
+    
     for dt in casual_leave_list:
         date_string = dt.strftime('%d/%m/%y')
         casual_leave_list_string.append(date_string + " ("+type_CL+")")
+        dict_casual_leave['casual leave dict'].update({date_string: type_CL})
+    
     #print(casual_leave_list_string)
+    
     d[employeenumber]['casual leave list'] = casual_leave_list_string
+    d[employeenumber]['casual leave dict'] = dict_casual_leave
 
 def delete_employee():
     print("Employees already present", d.keys())
