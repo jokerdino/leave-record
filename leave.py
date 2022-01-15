@@ -2,6 +2,7 @@ import json
 from json.decoder import JSONDecodeError
 from datetime import timedelta, date
 import datetime
+import pandas as pd
 
 f = open('data.json')
 try:
@@ -9,10 +10,6 @@ try:
 except JSONDecodeError:
     d = {}
     pass
-
-#print(len(d))
-#print(d)
-
 
 
 def daterange(date1, date2):
@@ -22,16 +19,40 @@ def daterange(date1, date2):
 def numOfDays(date1, date2):
     return (date2-date1).days
 
+def validate_employee_number():
+    while True:
+        print("Employees already present: ",  d.keys())
+        employeeNumber_input = input("Enter employee number: ")
+        if employeeNumber_input not in d.keys():
+            print("Accepted")
+            return employeeNumber_input
+        else:
+            print("Employee number already exists.")
+
+
 def create_employee():
+
+    employeeNumber = validate_employee_number()
     employeeName = input("Enter name of the employee: ")
-    employeeNumber = input("Enter employee number: ")
     casualLeave = input("Enter current casual leave: ")
+    if int(casualLeave) > 12:
+        casualLeave = 12
     earnedLeave = input("Enter current earned leave: ")
+    if int(earnedLeave) > 270:
+        earnedleave = 270
     sickleave = input("Enter current sick leave: ")
+    if int(sickleave) > 240:
+        sickleave = 240
     RH = input("Enter current RH count: ")
+    if int(RH) > 2:
+        RH = 2
+    DOJ = input("Enter date of joining current office in yyyy-mm-dd format: ")
+    DOJ_date = datetime.datetime.strptime(DOJ, "%Y-%m-%d")
+#    DOJ_date_string = []
     d.update({employeeNumber:{
         "name": employeeName,
         "employee number" : employeeNumber,
+        "DOJ current office" : DOJ,
         "casual leave": casualLeave,
         "earned leave" : earnedLeave,
         "sick leave" : sickleave,
@@ -59,7 +80,10 @@ def add_casual_leave(employeenumber):
     start_cl = input("Enter start date in yyyy-mm-dd format: ")
     start_cl_date = datetime.datetime.strptime(start_cl, "%Y-%m-%d")
     end_cl = input("Enter end date: ")
-    end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+    if end_cl != "":
+        end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+    else:
+        end_cl_date = start_cl_date
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
     print(no_of_days)
     update_casual_leave(employeenumber, no_of_days)
@@ -77,25 +101,47 @@ def add_casual_leave(employeenumber):
     print(casual_leave_list_string)
     d[employeenumber]['casual leave list'] = casual_leave_list_string
 
+def delete_employee():
+    print("Employees already present", d.keys())
+    employeenumber = input("Enter employee number to delete: ")
+    d.pop(employeenumber)
 
-options = input("Choose your options: Press 1 for creating new employee master. Press 2 for adding casual leave. Press 3 for displaying current leave status. Press 4 for displaying all employees and their current leave status.")
+def keep_it_going(options):
 
+    if options == "1":
+        create_employee()
+    if options == "3":
+        employeenumber = input("Enter number to display current status: ")
+        print(d[employeenumber])
+    if options == "2":
+        employeenumber = input("Enter employee number:")
+        add_casual_leave(employeenumber)
+    if options == "4":
+        print(d)
+    if options == "6":
+        delete_employee()
 
-if options == "1":
-    create_employee()
-if options == "3":
-    employeenumber = input("Enter number to display current status: ")
-    print(d[employeenumber])
-if options == "2":
-    employeenumber = input("Enter employee number:")
-    add_casual_leave(employeenumber)
-if options == "4":
-    print(d)
+while(True):
+    
+    options = input("Choose your options: \nPress 1 for creating new employee master. \nPress 2 for adding casual leave. \nPress 3 for displaying current leave status. \nPress 4 for displaying all employees and their current leave status.\nPress 5 to exit the program.\nPress 6 to delete employee record.\nEnter your option :")
+    if options != "5":
+        keep_it_going(options)
+    else:
+        break
 
 a_file = open("data.json", "w")
 json.dump(d,a_file)
 
 a_file.close()
+
+
+df = pd.DataFrame.from_dict({(i): d[i]
+    for i in d.keys()},
+    orient='index')
+
+
+print(df)
+df.to_excel("leave-data.xlsx")
 
 #print(d)
 #a_file = open("data.json", "r")
