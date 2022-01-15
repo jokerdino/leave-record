@@ -1,4 +1,6 @@
 import json
+
+
 from json.decoder import JSONDecodeError
 from datetime import timedelta, date
 import datetime
@@ -61,7 +63,7 @@ def create_employee():
         "casual leave dict": {},
         "RH list": [],
         "Earned leave list": [],
-        "Sick leave list": [],
+        "sick leave dict": {},
         "Quarantine leave list":[],
         "Special leave list":[]
         }
@@ -231,7 +233,86 @@ def add_earned_leave(employeenumber):
     d[employeenumber]['Earned leave list'] = earned_leave_list_string 
 
 def add_sick_leave(employeenumber):
-    return
+    
+    print("Current SL count for employee", d[employeenumber]['sick leave'])
+    #casual_leave_count = d[employeenumber]['casual leave'] * 2
+    dict_sick_leave_list = d[employeenumber]['sick leave dict'].keys()
+    print(dict_sick_leave_list)
+    type_SL = input("Enter whether full or half pay SL: ")
+
+    start_sl = input("Enter start date in yyyy-mm-dd format: ")
+    start_sl_date = datetime.datetime.strptime(start_sl, "%Y-%m-%d")
+    
+    if start_sl_date.strftime("%d/%m/%y") in dict_sick_leave_list:
+        print("Sick leave already entered")
+        return
+    if type_SL == "half":
+        end_sl = ""
+    else:
+        end_sl = input("Enter end date: ")
+    
+    if end_sl == "":
+        #end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+    #else:
+        end_sl_date = start_sl_date
+    elif end_sl != "":
+         end_sl_date = datetime.datetime.strptime(end_sl, "%Y-%m-%d")
+
+    no_of_days = numOfDays(start_sl_date, end_sl_date)+1
+    
+    if type_SL == "full":
+        update_sick_leave(employeenumber, no_of_days*2)
+    elif type_SL == "half":
+        update_sick_leave(employeenumber, no_of_days)
+    
+    sick_leave_list = []
+ #   casual_leave_list_string = d[employeenumber]['casual leave list']
+    dict_sick_leave = d[employeenumber]['sick leave dict']
+    local_dict = {}
+    if end_sl_date == start_sl_date:
+        start_sl_date_string = start_sl_date.strftime('%d/%m/%y')
+  #      casual_leave_list_string.append(start_cl_date_string + " ("+type_CL+")")
+        #dict_casual_leave['casual leave dict'].update({start_cl_date_string: type_CL})
+        local_dict.update({start_sl_date_string: type_SL})
+    else:
+       for dt in daterange(start_sl_date, end_sl_date):
+           sick_leave_list.append(dt)
+           #dict_casual _leave['casual leave dict'].update({start_cl_date_string: type_CL}) 
+    for dt in sick_leave_list:
+        date_string = dt.strftime('%d/%m/%y')
+   #     casual_leave_list_string.append(date_string + " ("+type_CL+")")
+#        dict_casual_leave['casual leave dict'].update({date_string: type_CL})
+        local_dict.update({date_string: type_SL})   
+    #print(casual_leave_list_string)
+    
+    #d[employeenumber]['casual leave list'] = casual_leave_list_string
+    d[employeenumber]['sick leave dict'].update(local_dict)
+
+def delete_sick_leave(employeenumber):
+    
+    print(d[employeenumber]['sick leave dict'])
+    delete_sl = input("Enter date in yyyy-mm-dd format: ")
+    delete_sl_date = datetime.datetime.strptime(delete_sl, "%Y-%m-%d")
+    delete_sl_date_string = delete_sl_date.strftime("%d/%m/%y")
+
+    if delete_sl_date_string in d[employeenumber]['sick leave dict'].keys():
+        sickleave = delete_sl_date.strftime("%d/%m/%y")
+    else:
+        print("Entered date is not present")
+        return
+    if d[employeenumber]['sick leave dict'][sickleave] == "half":
+        update_risk_leave(employeenumber, -1)
+
+    else:
+        update_sick_leave(employeenumber, -2)
+    d[employeenumber]['sick leave dict'].pop(sickleave)
+
+def update_sick_leave(employeenumber, sickleavecount):
+    
+    currentsickbalance = d[employeenumber]['sick leave']
+    newsickbalance = float(currentsickbalance) - float(sickleavecount)
+ 
+    d[employeenumber]['sick leave'] = newsickbalance
 
 def req_emp_no():
     print("Employees already present", d.keys())
@@ -239,35 +320,49 @@ def req_emp_no():
 
 def keep_it_going(options):
 
-    if options == "1":
-        create_employee()
     if options == "3":
+        create_employee()
+    if options == "2":
         employeenumber = input("Enter number to display current status: ")
         print(d[employeenumber])
-    if options == "2":
+    if options == "5":
         employeenumber = input("Enter employee number: ")
         add_casual_leave(employeenumber)
-    if options == "4":
+    if options == "1":
         print(d)
-    if options == "6":
+    if options == "4":
         delete_employee()
-    if options == "7":
+    if options == "6":
         delete_casual_leave()
-    if options == "8":
-        #employeenumber = input("Enter employee number: ")
+    if options == "7":
         emp_no = req_emp_no()
         add_earned_leave(emp_no)
     if options == "9":
         emp_no = req_emp_no()
-    #employeenumber = input("Enter employee number: ")
-
         add_sick_leave(emp_no)
-    if options == "10":
+    if options == "8":
         delete_earned_leave()
+    if options == "10":
+        emp_no = req_emp_no()
+        delete_sick_leave(emp_no)
+    #if options == "12"
 while(True):
     
-    options = input("Choose your options: \nPress 1 for creating new employee master. \nPress 2 for adding casual leave. \nPress 3 for displaying current leave status. \nPress 4 for displaying all employees and their current leave status.\nPress 5 to exit the program.\nPress 6 to delete employee record.\nPress 7 to delete casual leave entry.\nEnter your option :")
-    if options != "5":
+    options = input("""Choose your options:
+ Press 1 to display all employees and their current leave status.
+ Press 2 to display current leave status of a particular employee.
+ Press 3 to create a new employee master.
+ Press 4 to delete an employee.
+ Press 5 to add casual leave.
+ Press 6 to delete already entered casual leave.
+ Press 7 to add earned leave.
+ Press 8 to delete already entered earned leave.
+ Press 9 to add sick leave.
+ Press 10 to delete already entered sick leave.
+ Press 11 to exit the program.
+
+Enter your option :""")
+    if options != "11":
         keep_it_going(options)
     else:
         break
