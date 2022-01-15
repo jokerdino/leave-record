@@ -39,7 +39,7 @@ def create_employee():
         casualLeave = 12
     earnedLeave = input("Enter current earned leave: ")
     if int(earnedLeave) > 270:
-        earnedleave = 270
+        earnedLeave = 270
     sickleave = input("Enter current sick leave: ")
     if int(sickleave) > 240:
         sickleave = 240
@@ -82,17 +82,28 @@ def add_casual_leave(employeenumber):
     
     print("Current CL count for employee", d[employeenumber]['casual leave'])
     #casual_leave_count = d[employeenumber]['casual leave'] * 2
-
+    dict_casual_leave_list = d[employeenumber]['casual leave dict'].keys()
+    print(dict_casual_leave_list)
     type_CL = input("Enter whether full or half CL: ")
 
     start_cl = input("Enter start date in yyyy-mm-dd format: ")
     start_cl_date = datetime.datetime.strptime(start_cl, "%Y-%m-%d")
-    end_cl = input("Enter end date: ")
     
-    if end_cl != "":
-        end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+    if start_cl_date.strftime("%d/%m/%y") in dict_casual_leave_list:
+        print("Casual leave already entered")
+        return
+    if type_CL == "half":
+        end_cl = ""
     else:
+        end_cl = input("Enter end date: ")
+    
+    if end_cl == "":
+        #end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+    #else:
         end_cl_date = start_cl_date
+    elif end_cl != "":
+         end_cl_date = datetime.datetime.strptime(end_cl, "%Y-%m-%d")
+
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
     
     if type_CL == "full":
