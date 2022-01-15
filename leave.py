@@ -173,10 +173,6 @@ def update_earned_leave(employeenumber, earnedleavecount):
     d[employeenumber]['earned leave'] = newELbalance
 
 
-
-
-
-
 def delete_earned_leave():
 
      employeenumber = req_emp_no()
@@ -201,9 +197,6 @@ def delete_earned_leave():
      d[employeenumber]['Earned leave list'].remove(earnedleave)
 
 
-
-
-
 def add_earned_leave(employeenumber):
     print(d[employeenumber]['earned leave'])
     print(d[employeenumber]['Earned leave list'])
@@ -214,6 +207,9 @@ def add_earned_leave(employeenumber):
     start_el = input("Enter start date in yyyy-mm-dd format: ")
     start_el_date = datetime.datetime.strptime(start_el, "%Y-%m-%d") 
 
+    if start_el_date.strftime("%d/%m/%y") in earned_leave_list_string:
+        print("Earned leave already entered")
+        return
     end_el = input("Enter end date in yyyy-mm-dd format: ")
     end_el_date = datetime.datetime.strptime(end_el, "%Y-%m-%d")
     
@@ -318,6 +314,19 @@ def req_emp_no():
     print("Employees already present", d.keys())
     return input("Enter employee number: ")
 
+def new_year_reset():
+    employeelist = d.keys()
+    print(employeelist)
+    for i in employeelist:
+
+        d[i]['casual leave'] = 12
+        d[i]['casual leave dict'] = {}
+        d[i]['RH'] = 2
+        if (int(d[i]['sick leave']) + 30) > 240:
+            d[i]['sick leave'] = 240
+        else:
+            update_sick_leave(i, -30)
+
 def keep_it_going(options):
 
     if options == "3":
@@ -345,7 +354,10 @@ def keep_it_going(options):
     if options == "10":
         emp_no = req_emp_no()
         delete_sick_leave(emp_no)
-    #if options == "12"
+    if options == "12":
+        new_year_reset()
+
+
 while(True):
     
     options = input("""Choose your options:
@@ -360,6 +372,7 @@ while(True):
  Press 9 to add sick leave.
  Press 10 to delete already entered sick leave.
  Press 11 to exit the program.
+ Press 12 to execute new year leave replenishment.
 
 Enter your option :""")
     if options != "11":
