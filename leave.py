@@ -78,6 +78,28 @@ def update_casual_leave(employeenumber, casualLeave):
     #print(d[employeenumber])
 
 
+def delete_casual_leave():
+    
+    employeenumber = input("Enter employee number")
+
+    print(d[employeenumber]['casual leave dict'])
+    delete_cl = input("Enter date in yyyy-mm-dd format: ")
+    delete_cl_date = datetime.datetime.strptime(delete_cl, "%Y-%m-%d")
+    delete_cl_date_string = delete_cl_date.strftime("%d/%m/%y")
+
+    if delete_cl_date_string in d[employeenumber]['casual leave dict'].keys():
+        casualleave = delete_cl_date.strftime("%d/%m/%y")
+    else:
+        print("Entered date is not present")
+        return
+    if d[employeenumber]['casual leave dict'][casualleave] == "half":
+        update_casual_leave(employeenumber, -0.5)
+
+    else:
+        update_casual_leave(employeenumber, -1)
+    d[employeenumber]['casual leave dict'].pop(casualleave)
+     
+
 def add_casual_leave(employeenumber):
     
     print("Current CL count for employee", d[employeenumber]['casual leave'])
@@ -153,10 +175,11 @@ def keep_it_going(options):
         print(d)
     if options == "6":
         delete_employee()
-
+    if options == "7":
+        delete_casual_leave()
 while(True):
     
-    options = input("Choose your options: \nPress 1 for creating new employee master. \nPress 2 for adding casual leave. \nPress 3 for displaying current leave status. \nPress 4 for displaying all employees and their current leave status.\nPress 5 to exit the program.\nPress 6 to delete employee record.\nEnter your option :")
+    options = input("Choose your options: \nPress 1 for creating new employee master. \nPress 2 for adding casual leave. \nPress 3 for displaying current leave status. \nPress 4 for displaying all employees and their current leave status.\nPress 5 to exit the program.\nPress 6 to delete employee record.\nPress 7 to delete casual leave entry.\nEnter your option :")
     if options != "5":
         keep_it_going(options)
     else:
