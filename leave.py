@@ -80,7 +80,8 @@ def update_casual_leave(employeenumber, casualLeave):
 
 def delete_casual_leave():
     
-    employeenumber = input("Enter employee number")
+    employeenumber = req_emp_no()
+    #employeenumber = input("Enter employee number")
 
     print(d[employeenumber]['casual leave dict'])
     delete_cl = input("Enter date in yyyy-mm-dd format: ")
@@ -157,9 +158,84 @@ def add_casual_leave(employeenumber):
     d[employeenumber]['casual leave dict'].update(local_dict)
 
 def delete_employee():
-    print("Employees already present", d.keys())
-    employeenumber = input("Enter employee number to delete: ")
+    #print("Employees already present", d.keys())
+    #employeenumber = input("Enter employee number to delete: ")
+    employeenumber = req_emp_no()
     d.pop(employeenumber)
+
+def update_earned_leave(employeenumber, earnedleavecount):
+    
+    currentELbalance = d[employeenumber]['earned leave']
+    newELbalance = float(currentELbalance) - float(earnedleavecount)
+ 
+    d[employeenumber]['earned leave'] = newELbalance
+
+
+
+
+
+
+def delete_earned_leave():
+
+     employeenumber = req_emp_no()
+     #employeenumber = input("Enter employee number")
+ 
+     print(d[employeenumber]['Earned leave list'])
+     delete_el = input("Enter date in yyyy-mm-dd format: ")
+     delete_el_date = datetime.datetime.strptime(delete_el, "%Y-%m-%d")
+     delete_el_date_string = delete_el_date.strftime("%d/%m/%y")
+ 
+     if delete_el_date_string in d[employeenumber]['Earned leave list']:
+         update_earned_leave(employeenumber, -1)
+         earnedleave = delete_el_date.strftime("%d/%m/%y")
+     else:
+         print("Entered date is not present")
+         return
+     #if d[employeenumber]['casual leave dict'][casualleave] = "half":
+      #   update_casual_leave(employeenumber, -0.5)
+ 
+    # else:
+         #update_earned_leave(employeenumber, -1)
+     d[employeenumber]['Earned leave list'].remove(earnedleave)
+
+
+
+
+
+def add_earned_leave(employeenumber):
+    print(d[employeenumber]['earned leave'])
+    print(d[employeenumber]['Earned leave list'])
+
+    earned_leave_list_string = d[employeenumber]['Earned leave list']
+    earned_leave_list = []
+
+    start_el = input("Enter start date in yyyy-mm-dd format: ")
+    start_el_date = datetime.datetime.strptime(start_el, "%Y-%m-%d") 
+
+    end_el = input("Enter end date in yyyy-mm-dd format: ")
+    end_el_date = datetime.datetime.strptime(end_el, "%Y-%m-%d")
+    
+  
+    no_of_days = numOfDays(start_el_date, end_el_date)+1
+  
+    update_earned_leave(employeenumber, no_of_days)
+   
+    print(no_of_days)
+    for dt in daterange(start_el_date, end_el_date):
+        earned_leave_list.append(dt)
+        #dict_casual _leave['casual leave dict'].update({start_cl_date_strin
+    for dt in earned_leave_list:
+        date_string = dt.strftime('%d/%m/%y')
+        earned_leave_list_string.append(date_string)           
+      #dict_casual_leave['casual leave dict'].update({date_string: type_CL})
+    d[employeenumber]['Earned leave list'] = earned_leave_list_string 
+
+def add_sick_leave(employeenumber):
+    return
+
+def req_emp_no():
+    print("Employees already present", d.keys())
+    return input("Enter employee number: ")
 
 def keep_it_going(options):
 
@@ -169,7 +245,7 @@ def keep_it_going(options):
         employeenumber = input("Enter number to display current status: ")
         print(d[employeenumber])
     if options == "2":
-        employeenumber = input("Enter employee number:")
+        employeenumber = input("Enter employee number: ")
         add_casual_leave(employeenumber)
     if options == "4":
         print(d)
@@ -177,6 +253,17 @@ def keep_it_going(options):
         delete_employee()
     if options == "7":
         delete_casual_leave()
+    if options == "8":
+        #employeenumber = input("Enter employee number: ")
+        emp_no = req_emp_no()
+        add_earned_leave(emp_no)
+    if options == "9":
+        emp_no = req_emp_no()
+    #employeenumber = input("Enter employee number: ")
+
+        add_sick_leave(emp_no)
+    if options == "10":
+        delete_earned_leave()
 while(True):
     
     options = input("Choose your options: \nPress 1 for creating new employee master. \nPress 2 for adding casual leave. \nPress 3 for displaying current leave status. \nPress 4 for displaying all employees and their current leave status.\nPress 5 to exit the program.\nPress 6 to delete employee record.\nPress 7 to delete casual leave entry.\nEnter your option :")
