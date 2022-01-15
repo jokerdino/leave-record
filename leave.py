@@ -103,23 +103,25 @@ def add_casual_leave(employeenumber):
     casual_leave_list = []
     casual_leave_list_string = d[employeenumber]['casual leave list']
     dict_casual_leave = d[employeenumber]['casual leave dict']
+    local_dict = {}
     if end_cl_date == start_cl_date:
         start_cl_date_string = start_cl_date.strftime('%d/%m/%y')
         casual_leave_list_string.append(start_cl_date_string + " ("+type_CL+")")
-        dict_casual_leave['casual leave dict'].update({start_cl_date_string: type_CL})
+        #dict_casual_leave['casual leave dict'].update({start_cl_date_string: type_CL})
+        local_dict.update({start_cl_date_string: type_CL})
     else:
        for dt in daterange(start_cl_date, end_cl_date):
            casual_leave_list.append(dt)
-    
+           #dict_casual _leave['casual leave dict'].update({start_cl_date_string: type_CL}) 
     for dt in casual_leave_list:
         date_string = dt.strftime('%d/%m/%y')
         casual_leave_list_string.append(date_string + " ("+type_CL+")")
-        dict_casual_leave['casual leave dict'].update({date_string: type_CL})
-    
+#        dict_casual_leave['casual leave dict'].update({date_string: type_CL})
+        local_dict.update({date_string: type_CL})   
     #print(casual_leave_list_string)
     
     d[employeenumber]['casual leave list'] = casual_leave_list_string
-    d[employeenumber]['casual leave dict'] = dict_casual_leave
+    d[employeenumber]['casual leave dict'].update(local_dict)
 
 def delete_employee():
     print("Employees already present", d.keys())
