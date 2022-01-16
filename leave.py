@@ -1,6 +1,6 @@
 import json
 
-
+#from pprint import pprint
 from json.decoder import JSONDecodeError
 from datetime import timedelta
 import datetime
@@ -66,7 +66,6 @@ def create_employee():
         "RH list": [],
         "Earned leave list": [],
         "sick leave dict": {},
-        "Quarantine leave list":[],
         "Special leave list":{},
         "LOP":{},
         "Leave encashment": {}
@@ -470,7 +469,6 @@ def calculate_el():
     save_data()
 
 
-from fractions import Fraction    
 
 def dec_to_proper_frac(emp_no):
 
@@ -486,8 +484,8 @@ def export_to_text(emp_no):
    
 
     date = datetime.datetime.now()
-    
-    file_name = emp_no + str(date)+".txt"
+    emp_name = d[emp_no]['name'] 
+    file_name = emp_name+emp_no + str(date)+".txt"
 
     with open(file_name, 'w') as f:
         with redirect_stdout(f):
@@ -508,16 +506,21 @@ def display_emp(emp_no):
 #    with open('stuff.txt', 'w') as f:
    #     with redirect_stdout(f):
     print("""=========================================================================
-Employee name: %s
-Employee number: %s
-Current Casual leave balance: %s
-Current EL balance: %s
-Leave encashment: %s.
-Current sick leave balance: %s
-Current Restricted holiday balance: %s
-List of casual leaves: %s
+Employee name                      : %s
+Employee number                    : %s
+Current Casual leave balance       : %s
+Current EL balance                 : %s
+Leave encashment                   : %s.
+Current sick leave balance         : %s
+Current Restricted holiday balance : %s
+List of casual leaves              : %s
+List of earned leaves              : %s
+List of sick leaves                : %s
+List of RH                         : %s
+List of LOP                        : %s
+List of special leaves             : %s
 =========================================================================
-    """ % (d[emp_no]['name'], d[emp_no]['employee number'], d[emp_no]['casual leave'], frac_earned_leave, leave_encashment_status, d[emp_no]['sick leave'], d[emp_no]['RH'], d[emp_no]['casual leave dict'] ))
+    """ % (d[emp_no]['name'], d[emp_no]['employee number'], d[emp_no]['casual leave'], frac_earned_leave, leave_encashment_status, d[emp_no]['sick leave'], d[emp_no]['RH'], d[emp_no]['casual leave dict'], d[emp_no]['Earned leave list'],d[emp_no]['sick leave dict'],d[emp_no]['RH list'], d[emp_no]['LOP'],d[emp_no]['Special leave list'] ))
 
 
 def save_data():
@@ -607,8 +610,10 @@ def keep_it_going(options):
     if options == "1":
         for i in d.keys():
             display_emp(i)
-        print(d)
-
+#        print(d)
+    if options == "6":
+        for i in d.keys():
+            export_to_text(i)
     if options == "4":
         new_year_reset()
     if options == "5":
@@ -648,6 +653,7 @@ Press 2 to create a new employee master.
 Press 3 to view, modify or delete employee's records.
 Press 4 to execute new year leave replenishment.
 Press 5 to calculate current EL.
+Press 6 to export leave data to text file.
 Press 9 to exit the program.
 Enter your option: """)
         if options != "9":
