@@ -267,7 +267,7 @@ def delete_sick_leave(employeenumber):
 
 def leave_encashment(emp_no):
 
-    print("Current earned leave count for %s is %d." % (emp_no, d[emp_no]['earned leave']))
+    print("Current earned leave count for %s is %s" % (emp_no, d[emp_no]['earned leave']))
     block_year = input("Block year for which leave is being encashed (Enter in YYYY-YYYY format - eg. 2022-2023): ")
     local_dict = {}
     
@@ -507,11 +507,30 @@ def employeeloop(empno, choice):
         add_earned_leave(empno)
     elif choice == "4":
         add_sick_leave(empno)
+    #elif choice == "5":
+     #   leave_encashment(empno)
+    #elif choice == "6":
+     #   add_rh_leave(empno)
     elif choice == "5":
-        leave_encashment(empno)
+        leave_input = input("""
+  Press 1 to enter leave encashment.
+  Press 2 to enter restricted holiday.
+  Press 3 to enter LOP or strike.
+  Press 4 to enter Special leave (eg. Examination leave, Maternity leave, paternity leave, quarantine leave, etc.)
+""")
+        
+        if leave_input == "1":
+            leave_encashment(empno)
+        elif leave_input == "2":
+            add_rh_leave(empno)
+
+        elif leave_input == "3":
+            add_LOP_leave(empno)
+        elif leave_input == "4":
+            add_special_leave(empno)
+        else:
+            return
     elif choice == "6":
-        add_rh_leave(empno)
-    elif choice == "7":
         leave_input = input("""
 Enter 1 to delete casual leave.
 Enter 2 to delete earned leave.
@@ -535,12 +554,20 @@ Enter 7 to delete Special leave.
             del_leave(empno,"LOP")
         elif leave_input == "7":
             del_leave(empno,"Special leave list")
-    elif choice == "10":
-        add_LOP_leave(empno)
-    elif choice == "11":
-        add_special_leave(empno)
+        else:
+            return
+   # elif choice == "10":
+    #    add_LOP_leave(empno)
+    #elif choice == "11":
+     #   add_special_leave(empno)
     else:
         return
+
+
+#def misc_leave_actions(newuserinput):
+ #   if newuserinput == "":
+
+
 
 def keep_it_going(options):
 
@@ -561,15 +588,12 @@ def keep_it_going(options):
   Press 2 to enter casual leave.
   Press 3 to enter earned leave.
   Press 4 to enter sick leave.
-  Press 5 to enter leave encashment.
-  Press 6 to enter restricted holiday.
-  Press 7 to delete already earned casual, earned,sick leave or RH.
-  Press 8 to delete the employee.
-  Press 10 to enter LOP or strike.
-  Press 11 to enter Special leave (eg. Examination leave, Maternity leave, paternity leave, quarantine leave, etc.)
+  Press 5 to enter misc. leaves (eg. Restricted holidays, LOP, leave encashment and special leaves).
+  Press 6 to delete already earned casual, earned,sick leave or RH.
+  Press 7 to delete the employee.
   Press 9 to return back to main menu.
 Enter your choice: """)
-                if newoptions == "8":
+                if newoptions == "7":
                     delete_employee(emp_no)
                     return
                 elif newoptions != "9":
