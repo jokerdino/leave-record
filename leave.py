@@ -7,6 +7,8 @@ import datetime
 import pandas as pd
 from fractions import Fraction
 
+from contextlib import redirect_stdout
+
 f = open('data.json')
 try:
     d = json.load(f)
@@ -471,44 +473,40 @@ def calculate_el():
 from fractions import Fraction    
 
 def dec_to_proper_frac(emp_no):
-    #sign = "-" if dec < 0 else ""
-    #frac = Fraction(abs(dec))
-    #return (f"{sign}{frac.numerator // frac.denominator} "
-     #       f"{frac.numerator % frac.denominator}/{frac.denominator}")
-
-    
 
     earned_leave = float(d[emp_no]['earned leave'])
     
     a = int(earned_leave) #%// 11
-    #print(a)
     new = earned_leave - a
     b = Fraction(new % 11).limit_denominator(100)
-    #print(b)
     fraction = str(a)+" "  + str(b)#+"/11"
     return fraction
+
+def export_to_text(emp_no):
+   
+
+    date = datetime.datetime.now()
+    
+    file_name = emp_no + str(date)+".txt"
+
+    with open(file_name, 'w') as f:
+        with redirect_stdout(f):
+
+            display_emp(emp_no)
+
+
 def display_emp(emp_no):
    
     frac_earned_leave = dec_to_proper_frac(emp_no)
-   # print(frac_earned_leave)
- #   earned_leave = float(d[emp_no]['earned leave'])
- #   
- #   a = int(earned_leave) #%// 11
- #   print(a)
- #   new = earned_leave - a
- #   b = Fraction(new % 11).limit_denominator(100)
- #   print(b)
- #   fraction = str(a)+" "  + str(b)#+"/11"
- #   print(fraction)
- #   #
-    #print(earned_leave)
+    
     leave_encashment_status = ""
     if len(d[emp_no]['Leave encashment']) == 0:
         leave_encashment_status = "Leave encashment not availed."
     else:
         block = list(d[emp_no]['Leave encashment'].keys())[-1]
         leave_encashment_status = "Leave encashment last availed for the block year " + block
-
+#    with open('stuff.txt', 'w') as f:
+   #     with redirect_stdout(f):
     print("""=========================================================================
 Employee name: %s
 Employee number: %s
@@ -547,6 +545,8 @@ def employeeloop(empno, choice):
         add_earned_leave(empno)
     elif choice == "4":
         add_sick_leave(empno)
+    elif choice == "8":
+        export_to_text(empno)
     elif choice == "5":
         leave_input = input("""
  Press 1 to enter leave encashment.
@@ -625,6 +625,7 @@ def keep_it_going(options):
   Press 5 to enter misc. leaves (eg. Restricted holidays, LOP, leave encashment and special leaves).
   Press 6 to delete already entered casual, earned, sick leave or RH.
   Press 7 to delete the employee.
+  Press 8 to export data to text file.
   Press 9 to return back to main menu.
 Enter your choice: """)
                 if newoptions == "7":
