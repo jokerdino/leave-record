@@ -50,7 +50,6 @@ def create_employee():
     RH = input("Enter current RH count: ")
     if int(RH) > 2:
         RH = 2
-    #DOJ = input("When was the leave record last updated on:  in dd-mm-yyyy format: ")
     DOJ_date = datetime.datetime.strptime(DOJ, "%d-%m-%Y")
     d.update({employeeNumber:{
         "name": employeeName,
@@ -330,7 +329,6 @@ def del_rh_leave(emp_no):
 
 def add_LOP_leave(employeenumber):
     
-    #print("Current SL count for employee", d[employeenumber]['sick leave'])
     dict_sick_leave_list = d[employeenumber]['LOP'].keys()
     print(dict_sick_leave_list)
     type_SL = input("Enter whether LOP or strike: ")
@@ -348,12 +346,6 @@ def add_LOP_leave(employeenumber):
     elif end_sl != "":
          end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
-    #no_of_days = numOfDays(start_sl_date, end_sl_date)+1
-    
-    #if type_SL == "full":
-     #   update_leave(employeenumber, "sick leave", no_of_days*2)
-    #elif type_SL == "half":
-    #    update_leave(employeenumber, "sick leave", no_of_days)
     
     sick_leave_list = []
     dict_sick_leave = d[employeenumber]['LOP']
@@ -382,11 +374,6 @@ def del_leave(employeenumber, leave_type):
     else:
         print("Entered date is not present")
         return
-   # if d[employeenumber]['sick leave dict'][sickleave] == "half":
-    #    update_leave(employeenumber,"sick leave", -1)
-
-    #else:
-     #   update_leave(employeenumber, "sick leave", -2)
     d[employeenumber][leave_type].pop(sickleave)
     save_data()
 
@@ -413,11 +400,6 @@ def add_special_leave(employeenumber):
 
     no_of_days = numOfDays(start_sl_date, end_sl_date)+1
     
-    #if type_SL == "full":
-     #   update_leave(employeenumber, "sick leave", no_of_days*2)
-    #elif type_SL == "half":
-    #    update_leave(employeenumber, "sick leave", no_of_days)
-    
     sick_leave_list = []
     dict_sick_leave = d[employeenumber]['Special leave list']
     local_dict = {}
@@ -432,6 +414,7 @@ def add_special_leave(employeenumber):
         local_dict.update({date_string: type_SL})   
     
     d[employeenumber]['Special leave list'].update(local_dict)
+
 def req_emp_no():
     print("Employees already present", d.keys())
     
@@ -507,17 +490,15 @@ def employeeloop(empno, choice):
         add_earned_leave(empno)
     elif choice == "4":
         add_sick_leave(empno)
-    #elif choice == "5":
-     #   leave_encashment(empno)
-    #elif choice == "6":
-     #   add_rh_leave(empno)
     elif choice == "5":
         leave_input = input("""
-  Press 1 to enter leave encashment.
-  Press 2 to enter restricted holiday.
-  Press 3 to enter LOP or strike.
-  Press 4 to enter Special leave (eg. Examination leave, Maternity leave, paternity leave, quarantine leave, etc.)
-""")
+ Press 1 to enter leave encashment.
+ Press 2 to enter restricted holiday.
+ Press 3 to enter LOP or strike.
+ Press 4 to enter Special leave (eg. Examination leave, Maternity leave, paternity leave, quarantine leave, etc.)
+ Press 9 to return to previous menu.
+Enter your option: 
+  """)
         
         if leave_input == "1":
             leave_encashment(empno)
@@ -532,13 +513,15 @@ def employeeloop(empno, choice):
             return
     elif choice == "6":
         leave_input = input("""
-Enter 1 to delete casual leave.
-Enter 2 to delete earned leave.
-Enter 3 to delete sick leave.
-Enter 4 to delete Restricted holiday.
-Enter 5 to delete leave encashment.
-Enter 6 to delete LOP / Strike.
-Enter 7 to delete Special leave.
+ Press 1 to delete casual leave.
+ Press 2 to delete earned leave.
+ Press 3 to delete sick leave.
+ Press 4 to delete Restricted holiday.
+ Press 5 to delete leave encashment.
+ Press 6 to delete LOP / Strike.
+ Press 7 to delete Special leave.
+ Press 9 to return to previous menu.
+Enter your option: 
 """)
         if leave_input == "1":
             delete_casual_leave(empno)
@@ -556,17 +539,8 @@ Enter 7 to delete Special leave.
             del_leave(empno,"Special leave list")
         else:
             return
-   # elif choice == "10":
-    #    add_LOP_leave(empno)
-    #elif choice == "11":
-     #   add_special_leave(empno)
     else:
         return
-
-
-#def misc_leave_actions(newuserinput):
- #   if newuserinput == "":
-
 
 
 def keep_it_going(options):
@@ -589,7 +563,7 @@ def keep_it_going(options):
   Press 3 to enter earned leave.
   Press 4 to enter sick leave.
   Press 5 to enter misc. leaves (eg. Restricted holidays, LOP, leave encashment and special leaves).
-  Press 6 to delete already earned casual, earned,sick leave or RH.
+  Press 6 to delete already entered casual, earned, sick leave or RH.
   Press 7 to delete the employee.
   Press 9 to return back to main menu.
 Enter your choice: """)
@@ -602,8 +576,8 @@ Enter your choice: """)
                     break
         else:
             print("No employees present")
-def leave_program():
 
+def leave_program():
 
     while(True):
         
