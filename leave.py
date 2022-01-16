@@ -74,15 +74,24 @@ def create_employee():
     save_data()
 
 
+def update_leave(emp_no, leave_type, no_of_days):
+    current_balance = d[emp_no][leave_type]
 
-def update_casual_leave(employeenumber, casualLeave):
-    currentCLbalance = d[employeenumber]['casual leave']
-    newCLbalance = float(currentCLbalance) - float(casualLeave)
-    
-    d[employeenumber]['casual leave'] = newCLbalance
+    newbalance = float(current_balance) - float(no_of_days)
+
+    d[emp_no][leave_type] = newbalance
+
     save_data()
-    #print(d[employeenumber])
 
+
+#def update_casual_leave(employeenumber, casualLeave):
+#    currentCLbalance = d[employeenumber]['casual leave']
+#    newCLbalance = float(currentCLbalance) - float(casualLeave)
+#    
+#    d[employeenumber]['casual leave'] = newCLbalance
+#    save_data()
+#    #print(d[employeenumber])
+#
 
 def delete_casual_leave(employeenumber):
     
@@ -100,7 +109,7 @@ def delete_casual_leave(employeenumber):
         print("Entered date is not present")
         return
     if d[employeenumber]['casual leave dict'][casualleave] == "half":
-        update_casual_leave(employeenumber, -0.5)
+        update_leave(employeenumber, "casual leave", -0.5)
 
     else:
         update_casual_leave(employeenumber, -1)
@@ -133,9 +142,9 @@ def add_casual_leave(employeenumber):
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
     
     if type_CL == "full":
-        update_casual_leave(employeenumber, no_of_days)
+        update_leave(employeenumber, "casual leave", no_of_days)
     elif type_CL == "half":
-        update_casual_leave(employeenumber, no_of_days/2)
+        update_leave(employeenumber, "casual leave", no_of_days/2)
     
     casual_leave_list = []
     dict_casual_leave = d[employeenumber]['casual leave dict']
@@ -159,14 +168,14 @@ def delete_employee(employeenumber):
     save_data()
 
 
-def update_earned_leave(employeenumber, earnedleavecount):
-    
-    currentELbalance = d[employeenumber]['earned leave']
-    newELbalance = float(currentELbalance) - float(earnedleavecount)
- 
-    d[employeenumber]['earned leave'] = newELbalance
-    save_data()
-
+#def update_earned_leave(employeenumber, earnedleavecount):
+#    
+#    currentELbalance = d[employeenumber]['earned leave']
+#    newELbalance = float(currentELbalance) - float(earnedleavecount)
+# 
+#    d[employeenumber]['earned leave'] = newELbalance
+#    save_data()
+#
 def delete_earned_leave(employeenumber):
 
  
@@ -176,7 +185,7 @@ def delete_earned_leave(employeenumber):
     delete_el_date_string = delete_el_date.strftime("%d-%m-%Y")
  
     if delete_el_date_string in d[employeenumber]['Earned leave list']:
-        update_earned_leave(employeenumber, -1)
+        update_leave(employeenumber, "earned leave", -1)
         earnedleave = delete_el_date.strftime("%d-%m-%Y")
     else:
         print("Entered date is not present")
@@ -204,7 +213,7 @@ def add_earned_leave(employeenumber):
   
     no_of_days = numOfDays(start_el_date, end_el_date)+1
   
-    update_earned_leave(employeenumber, no_of_days)
+    update_leave(employeenumber, "earned leave", no_of_days)
    
     print(no_of_days)
     for dt in daterange(start_el_date, end_el_date):
@@ -241,9 +250,9 @@ def add_sick_leave(employeenumber):
     no_of_days = numOfDays(start_sl_date, end_sl_date)+1
     
     if type_SL == "full":
-        update_sick_leave(employeenumber, no_of_days*2)
+        update_leave(employeenumber, "sick leave", no_of_days*2)
     elif type_SL == "half":
-        update_sick_leave(employeenumber, no_of_days)
+        update_leave(employeenumber, "sick leave", no_of_days)
     
     sick_leave_list = []
     dict_sick_leave = d[employeenumber]['sick leave dict']
@@ -274,21 +283,21 @@ def delete_sick_leave(employeenumber):
         print("Entered date is not present")
         return
     if d[employeenumber]['sick leave dict'][sickleave] == "half":
-        update_risk_leave(employeenumber, -1)
+        update_leave(employeenumber,"sick leave", -1)
 
     else:
-        update_sick_leave(employeenumber, -2)
+        update_leave(employeenumber, "sick leave", -2)
     d[employeenumber]['sick leave dict'].pop(sickleave)
     save_data()
 
-def update_sick_leave(employeenumber, sickleavecount):
-    
-    currentsickbalance = d[employeenumber]['sick leave']
-    newsickbalance = float(currentsickbalance) - float(sickleavecount)
- 
-    d[employeenumber]['sick leave'] = newsickbalance
-    save_data()
-
+#def update_sick_leave(employeenumber, sickleavecount):
+#    
+#    currentsickbalance = d[employeenumber]['sick leave']
+#    newsickbalance = float(currentsickbalance) - float(sickleavecount)
+# 
+#    d[employeenumber]['sick leave'] = newsickbalance
+#    save_data()
+#
 def leave_encashment(emp_no):
 
     print("Current earned leave count for %s is %d." % (emp_no, d[emp_no]['earned leave']))
@@ -301,7 +310,7 @@ def leave_encashment(emp_no):
         if int(no_of_days) > 15:
             no_of_days = 15
         local_dict.update({block_year: no_of_days})
-        update_earned_leave(emp_no, no_of_days)
+        update_leave(emp_no, "earned leave",no_of_days)
         d[emp_no]['Leave encashment'].update(local_dict)
     else:
         print("Block year already entered.")
@@ -316,7 +325,7 @@ def del_leave_encashment(emp_no):
         no_of_days = d[emp_no]['Leave encashment'][block_year] 
         int_no_days = int(no_of_days) * -1
         d[emp_no]['Leave encashment'].pop(block_year)
-        update_earned_leave(emp_no, int_no_days)
+        update_leave(emp_no, "earned leave", int_no_days)
     else:
         print("Entered block year is not present.")
 
@@ -336,16 +345,16 @@ def add_rh_leave(emp_no):
     else:
         date_string = start_date_rh.strftime('%d-%m-%Y')
         rh_list.append(date_string)
-        update_rh_leave(emp_no,1)
+        update_leave(emp_no,"RH", 1)
     save_data()
 
-def update_rh_leave(emp_no, no_of_days):
-    
-    current_balance_rh = d[emp_no]['RH']
-    new_balance_rh = int(current_balance_rh) - int(no_of_days)
-
-    d[emp_no]['RH'] = new_balance_rh
-
+#def update_rh_leave(emp_no, no_of_days):
+#    
+#    current_balance_rh = d[emp_no]['RH']
+#    new_balance_rh = int(current_balance_rh) - int(no_of_days)
+#
+#    d[emp_no]['RH'] = new_balance_rh
+#
 
 def del_rh_leave(emp_no):
 
@@ -355,7 +364,7 @@ def del_rh_leave(emp_no):
     delete_el_date_string = delete_el_date.strftime("%d-%m-%Y")
  
     if delete_el_date_string in d[emp_no]['RH list']:
-        update_rh_leave(emp_no, -1)
+        update_leave(emp_no, "RH", -1)
         earnedleave = delete_el_date.strftime("%d-%m-%Y")
     else:
         print("Entered date is not present")
@@ -452,9 +461,7 @@ Enter 5 to delete leave encashment.
         elif leave_input == "3":
             delete_sick_leave(empno)
         elif leave_input == "4":
-            # TODO
             del_rh_leave(empno)
-            #print("awaited shortly")
         elif leave_input == "5":
             del_leave_encashment(empno)
 
@@ -480,8 +487,8 @@ def keep_it_going(options):
   Press 3 to enter earned leave.
   Press 4 to enter sick leave.
   Press 5 to enter leave encashment.
-  Press 6 to enter Restricted holiday.
-  Press 7 to delete already earned casual, earned or sick leave.
+  Press 6 to enter restricted holiday.
+  Press 7 to delete already earned casual, earned,sick leave or RH.
   Press 8 to delete the employee.
   Press 9 to return back to main menu.
 Enter your choice: """)
@@ -506,20 +513,20 @@ Enter your option: """)
     else:
         break
 
-def save_data():
-    a_file = open("data.json", "w")
-    json.dump(d,a_file)
-
-    a_file.close()
-
-def backup_data():
-    date = datetime.datetime.now()
-    backup_file_name = "data" + str(date) +".json"
-
-    backup_file = open(backup_file_name, "w")
-
-    json.dump(d,backup_file)
-
+#def save_data():
+#    a_file = open("data.json", "w")
+#    json.dump(d,a_file)
+#
+#    a_file.close()
+#
+#def backup_data():
+#    date = datetime.datetime.now()
+#    backup_file_name = "data" + str(date) +".json"
+#
+#    backup_file = open(backup_file_name, "w")
+#
+#    json.dump(d,backup_file)
+#
 save_data()
 backup_data()
 
