@@ -169,7 +169,6 @@ def update_earned_leave(employeenumber, earnedleavecount):
 
 def delete_earned_leave(employeenumber):
 
-    #employeenumber = req_emp_no()
  
     print(d[employeenumber]['Earned leave list'])
     delete_el = input("Enter date in dd-mm-yyyy format: ")
@@ -320,10 +319,48 @@ def del_leave_encashment(emp_no):
         update_earned_leave(emp_no, int_no_days)
     else:
         print("Entered block year is not present.")
-        return
 
     save_data()
 
+def add_rh_leave(emp_no):
+    print(d[emp_no]['RH'])
+    
+    #string_leave_type_list = leave_type + "list"
+    rh_list = d[emp_no]["RH list"]
+
+    start_rh = input("Enter start date in dd-mm-yyyy format: ")
+    start_date_rh = datetime.datetime.strptime(start_rh, "%d-%m-%Y")
+    
+    if start_date_rh.strftime("%d-%m-%Y") in rh_list:
+        print("Restricted holiday already entered.")
+    else:
+        date_string = start_date_rh.strftime('%d-%m-%Y')
+        rh_list.append(date_string)
+        update_rh_leave(emp_no,1)
+    save_data()
+
+def update_rh_leave(emp_no, no_of_days):
+    
+    current_balance_rh = d[emp_no]['RH']
+    new_balance_rh = int(current_balance_rh) - int(no_of_days)
+
+    d[emp_no]['RH'] = new_balance_rh
+
+
+def del_rh_leave(emp_no):
+
+    print(d[emp_no]['RH list'])
+    delete_el = input("Enter date in dd-mm-yyyy format: ")
+    delete_el_date = datetime.datetime.strptime(delete_el, "%d-%m-%Y")
+    delete_el_date_string = delete_el_date.strftime("%d-%m-%Y")
+ 
+    if delete_el_date_string in d[emp_no]['RH list']:
+        update_rh_leave(emp_no, -1)
+        earnedleave = delete_el_date.strftime("%d-%m-%Y")
+    else:
+        print("Entered date is not present")
+        return 
+    d[emp_no]['RH list'].remove(earnedleave)
 
 def req_emp_no():
     print("Employees already present", d.keys())
@@ -387,25 +424,20 @@ def backup_data():
 
 
 def employeeloop(empno, choice):
-    #empno = req_emp_no()
     
     if choice == "1":
         print(d[empno])
     elif choice == "2":
         add_casual_leave(empno)
-    #elif choice == "3":
-     #   delete_casual_leave(empno)
     elif choice == "3":
         add_earned_leave(empno)
-    #elif choice == "5":
-     #   delete_earned_leave(empno)
     elif choice == "4":
         add_sick_leave(empno)
     elif choice == "5":
         leave_encashment(empno)
-    #elif choice == "7":
-     #   delete_sick_leave(empno)
     elif choice == "6":
+        add_rh_leave(empno)
+    elif choice == "7":
         leave_input = input("""
 Enter 1 to delete casual leave.
 Enter 2 to delete earned leave.
@@ -421,17 +453,13 @@ Enter 5 to delete leave encashment.
             delete_sick_leave(empno)
         elif leave_input == "4":
             # TODO
-            print("awaited shortly")
+            del_rh_leave(empno)
+            #print("awaited shortly")
         elif leave_input == "5":
             del_leave_encashment(empno)
 
     elif choice == "8":
         delete_employee(empno)
-    #elif choice == _:
-     #   print("Invalid input")
-    #if choice == "1":
-     #   print(d[empno])
-
 
 def keep_it_going(options):
 
@@ -443,7 +471,6 @@ def keep_it_going(options):
         new_year_reset()
     if options == "5":
         calculate_el()
-    
     if options == "3":
         emp_no = req_emp_no()
         while(True):
@@ -453,7 +480,8 @@ def keep_it_going(options):
   Press 3 to enter earned leave.
   Press 4 to enter sick leave.
   Press 5 to enter leave encashment.
-  Press 6 to delete already earned casual, earned or sick leave.
+  Press 6 to enter Restricted holiday.
+  Press 7 to delete already earned casual, earned or sick leave.
   Press 8 to delete the employee.
   Press 9 to return back to main menu.
 Enter your choice: """)
