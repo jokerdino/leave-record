@@ -108,6 +108,14 @@ def delete_casual_leave(employeenumber):
     d[employeenumber]['casual leave dict'].pop(casualleave)
     save_data()
 
+def check_leave_count(emp_no, leave_type, no_of_days):
+    current_leave_balance = d[emp_no][leave_type]
+
+    if (int(current_leave_balance) - no_of_days) < 0:
+        print("Insufficient leave balance.")
+        return False
+
+
 def add_casual_leave(employeenumber):
 
     print("Current CL count for employee", d[employeenumber]['casual leave'])
@@ -132,6 +140,9 @@ def add_casual_leave(employeenumber):
         end_cl_date = datetime.datetime.strptime(end_cl, "%d-%m-%Y")
 
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
+    
+    if check_leave_count(employeenumber,"casual leave",no_of_days) is False:
+        return
 
     if type_CL == "full":
         update_leave(employeenumber, "casual leave", no_of_days)
@@ -195,6 +206,8 @@ def add_earned_leave(employeenumber):
 
 
     no_of_days = numOfDays(start_el_date, end_el_date)+1
+    if check_leave_count(employeenumber,"earned leave",no_of_days) is False:
+        return
 
     update_leave(employeenumber, "earned leave", no_of_days)
 
@@ -229,6 +242,8 @@ def add_sick_leave(employeenumber):
 
     no_of_days = numOfDays(start_sl_date, end_sl_date)+1
 
+    if check_leave_count(employeenumber,"sick leave",no_of_days) is False:
+        return
     if type_SL == "full":
         update_leave(employeenumber, "sick leave", no_of_days*2)
     elif type_SL == "half":
@@ -280,6 +295,8 @@ def leave_encashment(emp_no):
         no_of_days = input("How many days earned leave is encashed? ")
         if int(no_of_days) > 15:
             no_of_days = 15
+        if check_leave_count(employeenumber,"earned leave",no_of_days) is False:
+            return
         local_dict.update({block_year: no_of_days})
         update_leave(emp_no, "earned leave",no_of_days)
         d[emp_no]['Leave encashment'].update(local_dict)
@@ -314,6 +331,8 @@ def add_rh_leave(emp_no):
         print("Restricted holiday already entered.")
     else:
         date_string = start_date_rh.strftime('%d-%m-%Y')
+        if check_leave_count(employeenumber,"RH",no_of_days) is False:
+            return
         rh_list.append(date_string)
         update_leave(emp_no,"RH", 1)
     save_data()
