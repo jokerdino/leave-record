@@ -9,10 +9,14 @@ from fractions import Fraction
 
 from contextlib import redirect_stdout
 
-f = open('data.json')
 try:
-    d = json.load(f)
-except JSONDecodeError:
+    f = open('data.json')
+    try:
+        d = json.load(f)
+    except JSONDecodeError:
+        d = {}
+        pass
+except FileNotFoundError:
     d = {}
     pass
 
@@ -100,7 +104,7 @@ def delete_casual_leave(employeenumber):
         update_leave(employeenumber, "casual leave", -0.5)
 
     else:
-        update_casual_leave(employeenumber, -1)
+        update_leave(employeenumber, "casual leave", -1)
     d[employeenumber]['casual leave dict'].pop(casualleave)
     save_data()
 
@@ -440,7 +444,7 @@ def new_year_reset():
         if (int(d[i]['sick leave']) + 30) > 240:
             d[i]['sick leave'] = 240
         else:
-            update_sick_leave(i, -30)
+            update_leave(i, "sick leave",-30)
     save_data()
 
 def calculate_el():
@@ -499,7 +503,7 @@ def display_emp(emp_no):
     
     leave_encashment_status = ""
     if len(d[emp_no]['Leave encashment']) == 0:
-        leave_encashment_status = "Leave encashment not availed."
+        leave_encashment_status = "Leave encashment not availed"
     else:
         block = list(d[emp_no]['Leave encashment'].keys())[-1]
         leave_encashment_status = "Leave encashment last availed for the block year " + block
@@ -532,8 +536,10 @@ def save_data():
 def backup_data():
     date = datetime.datetime.now()
     backup_file_name = "data" + str(date) +".json"
-
-    open(backup_file_name, "w")
+	
+    #json.dump(d,backup_file_name)
+    open(backup_file_name, "w") #ais f:
+    #.write(d)
 
 
 def employeeloop(empno, choice):
@@ -614,6 +620,8 @@ def keep_it_going(options):
     if options == "6":
         for i in d.keys():
             export_to_text(i)
+        #leave_program() 
+        return
     if options == "4":
         new_year_reset()
     if options == "5":
