@@ -140,7 +140,7 @@ def add_casual_leave(employeenumber):
         end_cl_date = datetime.datetime.strptime(end_cl, "%d-%m-%Y")
 
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
-    
+
     if check_leave_count(employeenumber,"casual leave",no_of_days) is False:
         return
 
@@ -491,7 +491,32 @@ def calculate_el():
         d[i]['Leave updated as on'] = today_string
     save_data()
 
+def report_leave(date):
 
+    emp_list = d.keys()
+
+    print("List of employees who were absent on %s." % date)
+    for i in emp_list:
+        leave_type = ['Earned leave list','RH list']#,'Special leave list','LOP','sick leave dict']
+        dict_type = ['casual leave dict', 'Special leave list','LOP','sick leave dict']
+        for j in leave_type:
+            if date in d[i][j]:
+                print("Name: %s. Type of leave: %s" % (str(d[i]['name']), j))
+        for j in dict_type:
+            if date in d[i][j]:
+                print("Name: %s. Type of leave: %s Nature of leave: %s" % (str(d[i]['name']), j, d[i][j][date]))
+
+
+def report_lop(lop_choice):
+    emp_list = d.keys()
+
+    print("List of employees who are on %s: " % lop_choice)
+    for i in emp_list:
+        for j in d[i]['LOP'].keys():
+
+            if d[i]['LOP'][j] == lop_choice:
+                print("""
+Name: %s. Date: %s""" % (d[i]['name'], j))
 
 def dec_to_proper_frac(emp_no):
 
@@ -499,19 +524,19 @@ def dec_to_proper_frac(emp_no):
 
     if not (earned_leave).is_integer():
 
-        a = int(earned_leave) #%// 11
+        a = int(earned_leave)
         new = earned_leave - a
         b = Fraction(new % 11).limit_denominator(100)
-        fraction = str(a)+" "  + str(b)#+"/11"
+        fraction = str(a)+" "  + str(b)
         return fraction
     else:
         return earned_leave
 
 def export_to_text(emp_no):
-   
+
 
     date = datetime.datetime.now()
-    emp_name = d[emp_no]['name'] 
+    emp_name = d[emp_no]['name']
     file_name = emp_name+emp_no + str(date)+".txt"
 
     with open(file_name, 'w') as f:
@@ -521,9 +546,9 @@ def export_to_text(emp_no):
 
 
 def display_emp(emp_no):
-   
+
     frac_earned_leave = dec_to_proper_frac(emp_no)
-    
+
     leave_encashment_status = ""
     if len(d[emp_no]['Leave encashment']) == 0:
         leave_encashment_status = "Leave encashment not availed"
@@ -559,7 +584,7 @@ def save_data():
 def backup_data():
     date = datetime.datetime.now()
     backup_file_name = "data" + str(date) +".json"
-	
+
     #json.dump(d,backup_file_name)
     open(backup_file_name, "w") #ais f:
     #.write(d)
@@ -631,6 +656,19 @@ Enter your option:
     else:
         return
 
+def reports(): #xxreport_option):
+
+    report_options = input("""
+Press 1 to display all the employees who were on leave on a particular day.
+Press 2 to display all the employees who are on LOP / strike.
+Enter your choice: """)
+    if report_options == "1":
+        date = input("Enter the date in dd-mm-yyyy format: ")
+        report_leave(date)
+    if report_options == "2":
+        lop_choice = input("Enter the type (Choose between LOP and strike): ")
+        report_lop(lop_choice)
+
 
 def keep_it_going(options):
 
@@ -643,12 +681,16 @@ def keep_it_going(options):
     if options == "6":
         for i in d.keys():
             export_to_text(i)
-        #leave_program() 
+        #leave_program()
         return
     if options == "4":
         new_year_reset()
     if options == "5":
         calculate_el()
+    if options == "7":
+        reports()
+        #date = input("Enter date on which in dd-mm-yyyy format: ")
+        #report_leave(date)
     if options == "3":
         if (len(d) != 0):
             emp_no = req_emp_no()
@@ -685,6 +727,7 @@ Press 3 to view, modify or delete employee's records.
 Press 4 to execute new year leave replenishment.
 Press 5 to calculate current EL.
 Press 6 to export leave data to text file.
+Press 7 to generate reports.
 Press 9 to exit the program.
 Enter your option: """)
         if options != "9":
@@ -694,6 +737,7 @@ Enter your option: """)
 
 leave_program()
 
+#report_leave("01-01-2021")
 save_data()
 backup_data()
 
