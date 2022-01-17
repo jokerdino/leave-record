@@ -477,12 +477,16 @@ def calculate_el():
 def dec_to_proper_frac(emp_no):
 
     earned_leave = float(d[emp_no]['earned leave'])
-    
-    a = int(earned_leave) #%// 11
-    new = earned_leave - a
-    b = Fraction(new % 11).limit_denominator(100)
-    fraction = str(a)+" "  + str(b)#+"/11"
-    return fraction
+
+    if not (earned_leave).is_integer():
+
+        a = int(earned_leave) #%// 11
+        new = earned_leave - a
+        b = Fraction(new % 11).limit_denominator(100)
+        fraction = str(a)+" "  + str(b)#+"/11"
+        return fraction
+    else:
+        return earned_leave
 
 def export_to_text(emp_no):
    
