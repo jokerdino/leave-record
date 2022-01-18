@@ -303,9 +303,9 @@ def leave_encashment(emp_no):
 
     if block_year not in d[emp_no]['Leave encashment'].keys():
         no_of_days = input("How many days earned leave is encashed? ")
-        if int(no_of_days) > 15:
-            no_of_days = 15
-        if check_leave_count(emp_no,"earned leave",no_of_days) is False:
+        no_of_days = min(int(no_of_days),15)
+
+        if check_leave_count(emp_no,"earned leave",int(no_of_days)) is False:
             return
         local_dict.update({block_year: no_of_days})
         update_leave(emp_no, "earned leave",no_of_days)
@@ -504,6 +504,15 @@ def report_leave(date):
             if date in d[i][j]:
                 print("Name: %s. Type of leave: %s Nature of leave: %s" % (str(d[i]['name']), j, d[i][j][date]))
 
+def report_leave_encashment():
+
+    emp_list = d.keys()
+    print("List of employees who have taken leave encashment: ")
+
+    for i in emp_list:
+        for j in d[i]['Leave encashment']:
+            print("%s has taken leave encashment in block year %s." % (i,j))
+
 def report_lop(leave_type,lop_choice):
     emp_list = d.keys()
 
@@ -604,8 +613,7 @@ def employeeloop(empno, choice):
  Press 3 to enter LOP or strike.
  Press 4 to enter Special leave (eg. Examination leave, Maternity leave, paternity leave, quarantine leave, etc.)
  Press 9 to return to previous menu.
-Enter your option:
-  """)
+Enter your option: """)
 
         if leave_input == "1":
             leave_encashment(empno)
@@ -628,8 +636,7 @@ Enter your option:
  Press 6 to delete LOP / Strike.
  Press 7 to delete Special leave.
  Press 9 to return to previous menu.
-Enter your option:
-""")
+Enter your option: """)
         if leave_input == "1":
             del_casual_leave(empno)
         elif leave_input == "2":
@@ -655,6 +662,7 @@ def reports():
 Press 1 to display all the employees who were on leave on a particular day.
 Press 2 to display all the employees who are on LOP / strike.
 Press 3 to display all the employees who took half pay sick leave.
+Press 4 to display all the employees who have taken leave encashment.
 Enter your choice: """)
     if report_options == "1":
         date = input("Enter the date in dd-mm-yyyy format: ")
@@ -664,6 +672,10 @@ Enter your choice: """)
         report_lop('LOP',lop_choice)
     if report_options == "3":
         report_lop('sick leave dict','half')
+    if report_options == '4':
+        report_leave_encashment()
+    else:
+        return
 
 def keep_it_going(options):
 
