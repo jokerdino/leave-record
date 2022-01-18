@@ -81,6 +81,7 @@ def create_employee():
     }
     )
     save_data()
+    print("Employee %s with employee number %s has been created." % (employee_name, employee_number))
     display_emp(employee_number)
 
 def update_leave(emp_no, leave_type, no_of_days):
@@ -90,6 +91,7 @@ def update_leave(emp_no, leave_type, no_of_days):
 
     d[emp_no][leave_type] = newbalance
     save_data()
+    print("%s has been updated. New balance: %s" % (leave_type, newbalance))
 
 def del_casual_leave(emp_no):
 
@@ -110,6 +112,7 @@ def del_casual_leave(emp_no):
         update_leave(emp_no, "casual leave", -1)
     d[emp_no]['casual leave dict'].pop(casualleave)
     save_data()
+    print("%s has been deleted from casual leave list." % delete_cl)
 
 def check_leave_count(emp_no, leave_type, no_of_days):
     current_leave_balance = d[emp_no][leave_type]
@@ -166,6 +169,7 @@ def add_casual_leave(emp_no):
 
     d[emp_no]['casual leave dict'].update(local_dict)
     save_data()
+    print("Casual leave has been added.")
 
 def delete_employee(emp_no):
     backup_data()
@@ -222,6 +226,7 @@ def add_earned_leave(emp_no):
         earned_leave_list_string.append(date_string)
     d[emp_no]['Earned leave list'] = earned_leave_list_string
     save_data()
+    print("Earned leave has been added.")
 
 def add_sick_leave(emp_no):
 
@@ -267,6 +272,7 @@ def add_sick_leave(emp_no):
 
     d[emp_no]['sick leave dict'].update(local_dict)
     save_data()
+    print("Sick leave has been added.")
 
 def del_sick_leave(emp_no):
 
@@ -304,8 +310,9 @@ def leave_encashment(emp_no):
         local_dict.update({block_year: no_of_days})
         update_leave(emp_no, "earned leave",no_of_days)
         d[emp_no]['Leave encashment'].update(local_dict)
+        print("Block year %s has been entered." % (block_year))
     else:
-        print("Block year already entered.")
+        print("Block year %s has already been entered." % block_year)
     save_data()
 
 def del_leave_encashment(emp_no):
@@ -318,6 +325,7 @@ def del_leave_encashment(emp_no):
         int_no_days = int(no_of_days) * -1
         d[emp_no]['Leave encashment'].pop(block_year)
         update_leave(emp_no, "earned leave", int_no_days)
+        print("Block year %s has been deleted." % block_year)
     else:
         print("Entered block year is not present.")
 
@@ -340,6 +348,7 @@ def add_rh_leave(emp_no):
         rh_list.append(date_string)
         update_leave(emp_no,"RH", 1)
     save_data()
+    print("Restricted holiday has been added.")
 
 def add_LOP_leave(emp_no):
 
@@ -376,6 +385,8 @@ def add_LOP_leave(emp_no):
 
     d[emp_no]['LOP'].update(local_dict)
 
+    print("%s has been added." % type_SL)
+
 def del_leave(emp_no, leave_type):
 
     print(d[emp_no][leave_type])
@@ -390,6 +401,8 @@ def del_leave(emp_no, leave_type):
         return
     d[emp_no][leave_type].pop(sickleave)
     save_data()
+
+    print("%s has been deleted." % delete_SL)
 
 def add_special_leave(emp_no):
 
@@ -425,6 +438,7 @@ def add_special_leave(emp_no):
         local_dict.update({date_string: type_SL})
 
     d[emp_no]['Special leave list'].update(local_dict)
+    print("Special leave has been added.")
 
 def req_emp_no():
 
