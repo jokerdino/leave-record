@@ -50,20 +50,19 @@ def create_employee():
     employee_number = validate_employee_number()
     employee_name = input("Enter name of the employee: ")
     DOJ = input("Leave record last updated on:  Enter date in dd-mm-yyyy format: ")
-           # When was the leave record last updated on:  in dd-mm-yyyy format: ")
+    
     casual_leave = input("Enter current casual leave: ")
-    if int(casual_leave) > 12:
-        casual_leave = 12
+    casual_leave = min(int(casual_leave), 12)
+
     earned_leave = input("Enter current earned leave: ")
-    if int(earned_leave) > 270:
-        earned_leave = 270
+    earned_leave = min(int(earned_leave),270)
+
     sick_leave = input("Enter current sick leave: ")
-    if int(sick_leave) > 240:
-        sick_leave = 240
+    sick_leave = min(int(sick_leave),240)
+
     RH = input("Enter current RH count: ")
-    if int(RH) > 2:
-        RH = 2
-    #DOJ_date = datetime.datetime.strptime(DOJ, "%d-%m-%Y")
+    RH = min(int(RH),2)
+
     d.update({employee_number:{
         "name": employee_name,
         "employee number" : employee_number,
@@ -104,7 +103,7 @@ def delete_casual_leave(employeenumber):
     if delete_cl_date_string in d[employeenumber]['casual leave dict'].keys():
         casualleave = delete_cl_date.strftime("%d-%m-%Y")
     else:
-        print("Entered date is not present")
+        print("Entered date is not present.")
         return
     if d[employeenumber]['casual leave dict'][casualleave] == "half":
         update_leave(employeenumber, "casual leave", -0.5)
@@ -156,7 +155,7 @@ def add_casual_leave(employeenumber):
         update_leave(employeenumber, "casual leave", no_of_days/2)
 
     casual_leave_list = []
-    #dict_casual_leave = d[employeenumber]['casual leave dict']
+
     local_dict = {}
     if end_cl_date == start_cl_date:
         start_cl_date_string = start_cl_date.strftime('%d-%m-%Y')
@@ -205,7 +204,7 @@ def add_earned_leave(employeenumber):
     start_el_date = datetime.datetime.strptime(start_el, "%d-%m-%Y")
 
     if start_el_date.strftime("%d-%m-%Y") in earned_leave_list_string:
-        print("Earned leave already entered")
+        print("Earned leave already entered.")
         return
     end_el = input("Enter end date in dd-mm-yyyy format: ")
     end_el_date = datetime.datetime.strptime(end_el, "%d-%m-%Y")
@@ -256,7 +255,7 @@ def add_sick_leave(employeenumber):
         update_leave(employeenumber, "sick leave", no_of_days)
 
     sick_leave_list = []
-    #dict_sick_leave = d[employeenumber]['sick leave dict']
+
     local_dict = {}
     if end_sl_date == start_sl_date:
         start_sl_date_string = start_sl_date.strftime('%d-%m-%Y')
@@ -281,7 +280,7 @@ def delete_sick_leave(employeenumber):
     if delete_sl_date_string in d[employeenumber]['sick leave dict'].keys():
         sickleave = delete_sl_date.strftime("%d-%m-%Y")
     else:
-        print("Entered date is not present")
+        print("Entered date is not present.")
         return
     if d[employeenumber]['sick leave dict'][sickleave] == "half":
         update_leave(employeenumber,"sick leave", -1)
@@ -562,7 +561,7 @@ def export_to_text(emp_no):
         with redirect_stdout(f):
 
             display_emp(emp_no)
-
+    print("Leave data of %s has been exported to text file." % emp_no)
 
 def display_emp(emp_no):
 
@@ -689,7 +688,7 @@ Enter your choice: """)
         lop_choice = input("Enter the type (Choose between LOP and strike): ")
         report_lop('LOP',lop_choice)
     if report_options == "3":
-        report_lop('sick leave dict','half')#i#lop_choice)
+        report_lop('sick leave dict','half')
 
 def keep_it_going(options):
 
@@ -698,19 +697,15 @@ def keep_it_going(options):
     if options == "1":
         for i in d.keys():
             display_emp(i)
-#        print(d)
     if options == "6":
         for i in d.keys():
             export_to_text(i)
-        #leave_program()
         return
     if options == "4":
         new_year_reset()
     if options == "5":
         calculate_el()
     if options == "8":
-
-        #update_employee = input("Which employee do you want to update? ")
         update_emp = req_emp_no()
         update_choice = input("""What do you want to update?
 Press 1 to update name.
@@ -724,7 +719,6 @@ Enter your choice: """)
             change = input("Enter new name: ")
             update_employee(update_emp,"name", change)
         elif update_choice == "2":
-            #change = input("Enter new employee number: ")
             change = validate_employee_number()
             update_employee(update_emp,"employee number", change)
             d[change] = d[update_emp]
@@ -745,8 +739,6 @@ Enter your choice: """)
             return
     if options == "7":
         reports()
-        #date = input("Enter date on which in dd-mm-yyyy format: ")
-        #report_leave(date)
     if options == "3":
         if (len(d) != 0):
             emp_no = req_emp_no()
@@ -794,7 +786,6 @@ Enter your option: """)
 
 leave_program()
 
-#report_leave("01-01-2021")
 save_data()
 backup_data()
 
