@@ -30,14 +30,20 @@ def numOfDays(date1, date2):
 
 def validate_employee_number():
     while True:
-        print("Employees already present: ",  d.keys())
-        employeeNumber_input = input("Enter employee number: ")
+        print("Employees already present in database: ",  d.keys())
+        employeeNumber_input = input("Enter new employee number: ")
         if employeeNumber_input not in d.keys():
             print("Accepted")
             return employeeNumber_input
         else:
-            print("Employee number already exists.")
+            print("Employee number already exists. Enter unique employee number.")
 
+def update_employee(emp_no, update_type, update):
+
+    d[emp_no][update_type] = update 
+    
+    print("%s has been updated to %s." % (update_type, update))
+    save_data()
 
 def create_employee():
 
@@ -441,6 +447,7 @@ def add_special_leave(employeenumber):
     d[employeenumber]['Special leave list'].update(local_dict)
 
 def req_emp_no():
+
     print("Employees already present", d.keys())
 
     if len(d) != 0:
@@ -701,6 +708,41 @@ def keep_it_going(options):
         new_year_reset()
     if options == "5":
         calculate_el()
+    if options == "8":
+
+        #update_employee = input("Which employee do you want to update? ")
+        update_emp = req_emp_no()
+        update_choice = input("""What do you want to update?
+Press 1 to update name.
+Press 2 to update employee number.
+Press 3 to update casual leave.
+Press 4 to update earned leave.
+Press 5 to update sick leave.
+Press 6 to update RH.
+Enter your choice: """)
+        if update_choice == "1":
+            change = input("Enter new name: ")
+            update_employee(update_emp,"name", change)
+        elif update_choice == "2":
+            #change = input("Enter new employee number: ")
+            change = validate_employee_number()
+            update_employee(update_emp,"employee number", change)
+            d[change] = d[update_emp]
+            d.pop(update_emp)
+        elif update_choice == "3":
+            change = input("Enter new casual leave count: ")
+            update_employee(update_emp,"casual leave", min(12,int(change)))
+        elif update_choice == "4":
+            change = input("Enter new earned leave count: ")
+            update_employee(update_emp,"earned leave", min(270,int(change)))
+        elif update_choice == "5":
+            change = input("Enter new sick leave count: ")
+            update_employee(update_emp,"sick leave", min(240,int(change)))
+        elif update_choice == "6":
+            change = input("Enter new RH count: ")
+            update_employee(update_emp,"RH", min(2,int(change)))
+        else:
+            return
     if options == "7":
         reports()
         #date = input("Enter date on which in dd-mm-yyyy format: ")
@@ -742,6 +784,7 @@ Press 4 to execute new year leave replenishment.
 Press 5 to calculate current EL.
 Press 6 to export leave data to text file.
 Press 7 to generate reports.
+Press 8 to modify employee meta data.
 Press 9 to exit the program.
 Enter your option: """)
         if options != "9":
