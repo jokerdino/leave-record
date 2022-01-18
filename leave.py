@@ -37,6 +37,15 @@ def validate_employee_number():
         else:
             print("Employee number already exists. Enter unique employee number.")
 
+def validate_date(date):
+ #   while True:
+        try:
+            valid_date = datetime.datetime.strptime(date,"%d-%m-%Y")
+            return valid_date
+        except ValueError:
+            new_date = input('Incorrect format. Kindly enter the date in dd-mm-yyyy format: ')
+            validate_date(new_date)
+
 def update_employee(emp_no, update_type, update):
 
     d[emp_no][update_type] = update
@@ -53,6 +62,7 @@ def create_employee():
     employee_number = validate_employee_number()
     employee_name = input("Enter name of the employee: ")
     DOJ = input("Leave record last updated on:  Enter date in dd-mm-yyyy format: ")
+    validate_date(DOJ)
 
     casual_leave = input("Enter current casual leave: ")
     casual_leave = max(0,min(int(casual_leave), 12))
@@ -103,6 +113,7 @@ def del_casual_leave(emp_no):
 
     print(d[emp_no]['casual leave dict'])
     delete_cl = input("Enter date in dd-mm-yyyy format: ")
+    validate_date(delete_cl)
     delete_cl_date = datetime.datetime.strptime(delete_cl, "%d-%m-%Y")
     delete_cl_date_string = delete_cl_date.strftime("%d-%m-%Y")
 
@@ -135,6 +146,7 @@ def add_casual_leave(emp_no):
     type_CL = input("Enter whether full or half CL: ")
 
     start_cl = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_cl)
     start_cl_date = datetime.datetime.strptime(start_cl, "%d-%m-%Y")
 
     if start_cl_date.strftime("%d-%m-%Y") in dict_casual_leave_list:
@@ -144,6 +156,7 @@ def add_casual_leave(emp_no):
         end_cl = ""
     else:
         end_cl = input("Enter end date: ")
+        validate_date(end_cl)
 
     if end_cl == "":
         end_cl_date = start_cl_date
@@ -188,6 +201,7 @@ def del_list_leave(emp_no, leave_type, leave_list):
     print(d[emp_no][leave_type])
     print(d[emp_no][leave_list])
     delete_leave = input("Enter date in dd-mm-yyyy format: ")
+    validate_date(delete_leave)
     delete_leave_date = datetime.datetime.strptime(delete_leave, "%d-%m-%Y")
     delete_leave_date_string = delete_leave_date.strftime("%d-%m-%Y")
 
@@ -209,12 +223,14 @@ def add_earned_leave(emp_no):
     earned_leave_list = []
 
     start_el = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_el)
     start_el_date = datetime.datetime.strptime(start_el, "%d-%m-%Y")
 
     if start_el_date.strftime("%d-%m-%Y") in earned_leave_list_string:
         print("Earned leave already entered.")
         return
     end_el = input("Enter end date in dd-mm-yyyy format: ")
+    validate_date(end_el)
     end_el_date = datetime.datetime.strptime(end_el, "%d-%m-%Y")
 
 
@@ -242,12 +258,14 @@ def add_sick_leave(emp_no):
     type_SL = input("Enter whether full or half pay SL: ")
 
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_sl)
     start_sl_date = datetime.datetime.strptime(start_sl, "%d-%m-%Y")
 
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("Sick leave already entered")
         return
     end_sl = input("Enter end date: ")
+    validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -284,6 +302,8 @@ def del_sick_leave(emp_no):
 
     print(d[emp_no]['sick leave dict'])
     delete_sl = input("Enter date in dd-mm-yyyy format: ")
+    validate_date(delete_sl)
+
     delete_sl_date = datetime.datetime.strptime(delete_sl, "%d-%m-%Y")
     delete_sl_date_string = delete_sl_date.strftime("%d-%m-%Y")
 
@@ -343,6 +363,7 @@ def add_rh_leave(emp_no):
     rh_list = d[emp_no]["RH list"]
 
     start_rh = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_rh)
     start_date_rh = datetime.datetime.strptime(start_rh, "%d-%m-%Y")
 
     if start_date_rh.strftime("%d-%m-%Y") in rh_list:
@@ -363,12 +384,14 @@ def add_LOP_leave(emp_no):
     type_SL = input("Enter whether LOP or strike: ")
 
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_sl)
     start_sl_date = datetime.datetime.strptime(start_sl, "%d-%m-%Y")
 
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("This date has already been entered.")
         return
     end_sl = input("Enter end date: ")
+    validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -397,6 +420,8 @@ def del_leave(emp_no, leave_type):
 
     print(d[emp_no][leave_type])
     delete_sl = input("Enter date in dd-mm-yyyy format: ")
+    validate_date(delete_sl)
+
     delete_sl_date = datetime.datetime.strptime(delete_sl, "%d-%m-%Y")
     delete_sl_date_string = delete_sl_date.strftime("%d-%m-%Y")
 
@@ -418,12 +443,15 @@ def add_special_leave(emp_no):
     type_SL = input("Enter the type of special leave (eg. Maternity leave, Paternity leave, Examination leave, Quantantine leave, etc): ")
 
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
+    validate_date(start_sl)
+
     start_sl_date = datetime.datetime.strptime(start_sl, "%d-%m-%Y")
 
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("Special leave already entered")
         return
     end_sl = input("Enter end date: ")
+    validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -672,6 +700,7 @@ Press 4 to display all the employees who have taken leave encashment.
 Enter your choice: """)
     if report_options == "1":
         date = input("Enter the date in dd-mm-yyyy format: ")
+        validate_date(date)
         report_leave(date)
     if report_options == "2":
         lop_choice = input("Enter the type (Choose between LOP and strike): ")
