@@ -44,6 +44,10 @@ def update_employee(emp_no, update_type, update):
     print("%s has been updated to %s." % (update_type, update))
     save_data()
 
+def mixed_to_float(x):
+    """Function credit to https://stackoverflow.com/a/46303199"""
+    return float(sum(Fraction(term) for term in x.split()))
+
 def create_employee():
 
     employee_number = validate_employee_number()
@@ -51,16 +55,18 @@ def create_employee():
     DOJ = input("Leave record last updated on:  Enter date in dd-mm-yyyy format: ")
 
     casual_leave = input("Enter current casual leave: ")
-    casual_leave = min(int(casual_leave), 12)
+    casual_leave = max(0,min(int(casual_leave), 12))
 
     earned_leave = input("Enter current earned leave: ")
-    earned_leave = min(int(earned_leave),270)
+    print(mixed_to_float(earned_leave))
+    earned_leave = mixed_to_float(earned_leave)
+    earned_leave = max(0,(min(float(earned_leave),270)))
 
     sick_leave = input("Enter current sick leave: ")
-    sick_leave = min(int(sick_leave),240)
+    sick_leave = max(0,min(int(sick_leave),240))
 
     RH = input("Enter current RH count: ")
-    RH = min(int(RH),2)
+    RH = max(0,min(int(RH),2))
 
     d.update({employee_number:{
         "name": employee_name,
@@ -712,16 +718,17 @@ Enter your choice: """)
             d.pop(update_emp)
         elif update_choice == "3":
             change = input("Enter new casual leave count: ")
-            update_employee(update_emp,"casual leave", min(12,int(change)))
+            update_employee(update_emp,"casual leave", max(0,min(12,int(change))))
         elif update_choice == "4":
             change = input("Enter new earned leave count: ")
-            update_employee(update_emp,"earned leave", min(270,int(change)))
+            change = mixed_to_float(change)
+            update_employee(update_emp,"earned leave", max(0,min(270,float(change))))
         elif update_choice == "5":
             change = input("Enter new sick leave count: ")
-            update_employee(update_emp,"sick leave", min(240,int(change)))
+            update_employee(update_emp,"sick leave", max(0,min(240,int(change))))
         elif update_choice == "6":
             change = input("Enter new RH count: ")
-            update_employee(update_emp,"RH", min(2,int(change)))
+            update_employee(update_emp,"RH", max(0,min(2,int(change))))
         else:
             return
     if options == "7":
