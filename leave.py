@@ -507,16 +507,27 @@ def report_leave(date):
                 print("Name: %s. Type of leave: %s Nature of leave: %s" % (str(d[i]['name']), j, d[i][j][date]))
 
 
-def report_lop(lop_choice):
+def report_lop(leave_type,lop_choice):
     emp_list = d.keys()
 
     print("List of employees who are on %s: " % lop_choice)
     for i in emp_list:
-        for j in d[i]['LOP'].keys():
+        for j in d[i][leave_type].keys():
 
-            if d[i]['LOP'][j] == lop_choice:
-                print("""
-Name: %s. Date: %s""" % (d[i]['name'], j))
+            if d[i][leave_type][j] == lop_choice:
+                print("Name: %s. Date: %s" % (d[i]['name'], j))
+
+#def report_half_pay():
+#
+#    emp_list = d.keys()
+#
+#    print("LIst of employees who took half-pay sick leave: ")
+#
+#    for i in emp_list:
+#        for j in d[i]['sick leave dict'].keys():
+#            if d[i]['sick leave dict'][j] == "half":
+#                print("""
+#Name: %s. Date: %s""" % (d[i]['name'], j))
 
 def dec_to_proper_frac(emp_no):
 
@@ -531,6 +542,7 @@ def dec_to_proper_frac(emp_no):
         return fraction
     else:
         return earned_leave
+
 
 def export_to_text(emp_no):
 
@@ -661,14 +673,16 @@ def reports(): #xxreport_option):
     report_options = input("""
 Press 1 to display all the employees who were on leave on a particular day.
 Press 2 to display all the employees who are on LOP / strike.
+Press 3 to display all the employees who took half pay sick leave.
 Enter your choice: """)
     if report_options == "1":
         date = input("Enter the date in dd-mm-yyyy format: ")
         report_leave(date)
     if report_options == "2":
         lop_choice = input("Enter the type (Choose between LOP and strike): ")
-        report_lop(lop_choice)
-
+        report_lop('LOP',lop_choice)
+    if report_options == "3":
+        report_lop('sick leave dict','half')#i#lop_choice)
 
 def keep_it_going(options):
 
