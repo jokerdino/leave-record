@@ -40,8 +40,8 @@ def validate_employee_number():
 
 def update_employee(emp_no, update_type, update):
 
-    d[emp_no][update_type] = update 
-    
+    d[emp_no][update_type] = update
+
     print("%s has been updated to %s." % (update_type, update))
     save_data()
 
@@ -50,7 +50,7 @@ def create_employee():
     employee_number = validate_employee_number()
     employee_name = input("Enter name of the employee: ")
     DOJ = input("Leave record last updated on:  Enter date in dd-mm-yyyy format: ")
-    
+
     casual_leave = input("Enter current casual leave: ")
     casual_leave = min(int(casual_leave), 12)
 
@@ -82,7 +82,7 @@ def create_employee():
     }
     )
     save_data()
-
+    display_emp(employee_number)
 
 def update_leave(emp_no, leave_type, no_of_days):
 
@@ -173,25 +173,26 @@ def add_casual_leave(employeenumber):
 def delete_employee(employeenumber):
     backup_data()
     d.pop(employeenumber)
-    print("Employee number %s deleted" %employeenumber)
+    print("Employee number %s has been deleted." %employeenumber)
     save_data()
 
-def delete_earned_leave(employeenumber):
+def del_list_leave(emp_no, leave_type, leave_list):
+    """Function to delete leaves stored in list type: earned leave and Restricted holiday"""
+    print(d[emp_no][leave_type])
+    print(d[emp_no][leave_list])
+    delete_leave = input("Enter date in dd-mm-yyyy format: ")
+    delete_leave_date = datetime.datetime.strptime(delete_leave, "%d-%m-%Y")
+    delete_leave_date_string = delete_leave_date.strftime("%d-%m-%Y")
 
-    print(d[employeenumber]['Earned leave list'])
-    delete_el = input("Enter date in dd-mm-yyyy format: ")
-    delete_el_date = datetime.datetime.strptime(delete_el, "%d-%m-%Y")
-    delete_el_date_string = delete_el_date.strftime("%d-%m-%Y")
-
-    if delete_el_date_string in d[employeenumber]['Earned leave list']:
-        update_leave(employeenumber, "earned leave", -1)
-        earnedleave = delete_el_date.strftime("%d-%m-%Y")
+    if delete_leave_date_string in d[emp_no][leave_list]:
+        update_leave(emp_no, leave_type, -1)
+        leave_to_be_removed = delete_leave_date.strftime("%d-%m-%Y")
     else:
-        print("Entered date is not present")
+        print("Entered date is not present.")
         return
+    d[emp_no][leave_list].remove(leave_to_be_removed)
 
-    d[employeenumber]['Earned leave list'].remove(earnedleave)
-    save_data()
+    print("%s %s has been deleted." % (leave_type, delete_leave))
 
 def add_earned_leave(employeenumber):
     print(d[employeenumber]['earned leave'])
@@ -336,26 +337,11 @@ def add_rh_leave(emp_no):
         print("Restricted holiday already entered.")
     else:
         date_string = start_date_rh.strftime('%d-%m-%Y')
-        if check_leave_count(employeenumber,"RH",no_of_days) is False:
+        if check_leave_count(emp_no,"RH",1) is False:
             return
         rh_list.append(date_string)
         update_leave(emp_no,"RH", 1)
     save_data()
-
-def del_rh_leave(emp_no):
-
-    print(d[emp_no]['RH list'])
-    delete_el = input("Enter date in dd-mm-yyyy format: ")
-    delete_el_date = datetime.datetime.strptime(delete_el, "%d-%m-%Y")
-    delete_el_date_string = delete_el_date.strftime("%d-%m-%Y")
-
-    if delete_el_date_string in d[emp_no]['RH list']:
-        update_leave(emp_no, "RH", -1)
-        earnedleave = delete_el_date.strftime("%d-%m-%Y")
-    else:
-        print("Entered date is not present")
-        return
-    d[emp_no]['RH list'].remove(earnedleave)
 
 def add_LOP_leave(employeenumber):
 
@@ -378,7 +364,7 @@ def add_LOP_leave(employeenumber):
 
 
     sick_leave_list = []
-    #dict_sick_leave = d[employeenumber]['LOP']
+
     local_dict = {}
     if end_sl_date == start_sl_date:
         start_sl_date_string = start_sl_date.strftime('%d-%m-%Y')
@@ -428,10 +414,8 @@ def add_special_leave(employeenumber):
     elif end_sl != "":
         end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
-    #no_of_days = numOfDays(start_sl_date, end_sl_date)+1
-
     sick_leave_list = []
-    #dict_sick_leave = d[employeenumber]['Special leave list']
+
     local_dict = {}
     if end_sl_date == start_sl_date:
         start_sl_date_string = start_sl_date.strftime('%d-%m-%Y')
@@ -450,9 +434,7 @@ def req_emp_no():
     print("Employees already present", d.keys())
 
     if len(d) != 0:
-
         while True:
-
             user_input = input("Enter employee number: ")
             if user_input not in d.keys():
                 print("Employee number not in record. Enter again.")
@@ -490,8 +472,7 @@ def calculate_el():
         accruedleaves = earnedleavedays / 11
         new_el_count = float(accruedleaves) + float(current_leave_count)
         new_el_count = min(new_el_count,270)
-        #if new_el_count > 270:
-         #   new_el_count = 270
+
         if d[i]['Leave updated as on'] != today_string:
             d[i]['earned leave'] = new_el_count
         d[i]['Leave updated as on'] = today_string
@@ -503,7 +484,7 @@ def report_leave(date):
 
     print("List of employees who were absent on %s." % date)
     for i in emp_list:
-        leave_type = ['Earned leave list','RH list']#,'Special leave list','LOP','sick leave dict']
+        leave_type = ['Earned leave list','RH list']
         dict_type = ['casual leave dict', 'Special leave list','LOP','sick leave dict']
         for j in leave_type:
             if date in d[i][j]:
@@ -522,18 +503,6 @@ def report_lop(leave_type,lop_choice):
 
             if d[i][leave_type][j] == lop_choice:
                 print("Name: %s. Date: %s" % (d[i]['name'], j))
-
-#def report_half_pay():
-#
-#    emp_list = d.keys()
-#
-#    print("LIst of employees who took half-pay sick leave: ")
-#
-#    for i in emp_list:
-#        for j in d[i]['sick leave dict'].keys():
-#            if d[i]['sick leave dict'][j] == "half":
-#                print("""
-#Name: %s. Date: %s""" % (d[i]['name'], j))
 
 def dec_to_proper_frac(emp_no):
 
@@ -658,11 +627,11 @@ Enter your option:
         if leave_input == "1":
             delete_casual_leave(empno)
         elif leave_input == "2":
-            delete_earned_leave(empno)
+            del_list_leave(empno,"earned leave","Earned leave list")
         elif leave_input == "3":
             delete_sick_leave(empno)
         elif leave_input == "4":
-            del_rh_leave(empno)
+            del_list_leave(empno,"RH", "RH list")
         elif leave_input == "5":
             del_leave_encashment(empno)
         elif leave_input == "6":
@@ -674,7 +643,7 @@ Enter your option:
     else:
         return
 
-def reports(): #xxreport_option):
+def reports():
 
     report_options = input("""
 Press 1 to display all the employees who were on leave on a particular day.
