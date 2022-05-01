@@ -157,6 +157,14 @@ def add_casual_leave(emp_no):
     dict_casual_leave_list = d[emp_no]['casual leave dict'].keys()
     print(dict_casual_leave_list)
     type_CL = input("Enter whether full or half CL: ")
+    #TODO: To validate full or half CL input
+#    while True:
+#        if type_CL != "full" or "half":
+#            type_CL = input("Enter full or half: ")
+#            if type_CL == "full" or "half":
+#                break
+#                #return type_CL
+#        #else return
 
     start_cl = input("Enter start date in dd-mm-yyyy format: ")
     start_cl = validate_date(start_cl)
@@ -274,7 +282,9 @@ def add_sick_leave(emp_no):
     dict_sick_leave_list = d[emp_no]['sick leave dict'].keys()
     print(dict_sick_leave_list)
     type_SL = input("Enter whether full or half pay SL: ")
-
+    #TODO: Validate full or half pay input in casual leave
+    #if type_SL != "full" or "half":
+    #    type_SL = input("Enter full or half")
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
     start_sl = validate_date(start_sl)
 
@@ -454,7 +464,7 @@ def del_leave(emp_no, leave_type):
     d[emp_no][leave_type].pop(sickleave)
     save_data()
 
-    print("%s has been deleted." % delete_SL)
+    print("%s has been deleted." % delete_sl)
 
 def add_special_leave(emp_no):
 
@@ -596,8 +606,13 @@ def export_to_text(emp_no):
 
 
     date = datetime.datetime.now()
+    str_date = str(date)
     emp_name = d[emp_no]['name']
-    file_name = emp_name+emp_no + str(date)+".txt"
+    string = ""
+    for character in str_date:
+        if character.isalnum():
+            string = string+character
+    file_name = emp_name+emp_no + string+".txt"
 
     with open(file_name, 'w') as f:
         with redirect_stdout(f):
@@ -641,7 +656,13 @@ def save_data():
 
 def backup_data():
     date = datetime.datetime.now()
-    backup_file_name = "data" + str(date) +".json"
+    str_date = str(date)
+    string = ""
+    for character in str_date:
+        if character.isalnum():
+            string = string+character
+
+    backup_file_name = "data" + string +".json"
 
     #json.dump(d,backup_file_name)
     open(backup_file_name, "w") #ais f:
