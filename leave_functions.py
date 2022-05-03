@@ -159,6 +159,9 @@ def add_casual_leave(emp_no):
     dict_casual_leave_list = d[emp_no]['casual leave dict'].keys()
     print(dict_casual_leave_list)
     type_CL = input("Enter whether full or half CL: ")
+    if type_CL != "half":
+        type_CL = "full"
+
     #TODO: To validate full or half CL input
 #    while True:
 #        if type_CL != "full" or "half":
@@ -285,6 +288,9 @@ def add_sick_leave(emp_no):
     dict_sick_leave_list = d[emp_no]['sick leave dict'].keys()
     print(dict_sick_leave_list)
     type_SL = input("Enter whether full or half pay SL: ")
+
+    if type_SL != "half":
+        type_SL = "full"
     #TODO: Validate full or half pay input in casual leave
     #if type_SL != "full" or "half":
     #    type_SL = input("Enter full or half")
