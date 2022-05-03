@@ -49,7 +49,7 @@ def validate_date(date):
 
 def validate_letters(letter):
 
-    if letter.isalpha() is False:
+    if letter.isascii() is False:
         letter = input("Kindly enter letters only: ")
         letter = validate_letters(letter)
 
@@ -178,12 +178,13 @@ def add_casual_leave(emp_no):
     if type_CL == "half":
         end_cl = ""
     else:
-        end_cl = input("Enter end date: ")
-        end_cl = validate_date(end_cl)
+        end_cl = input("Enter end date if there are more than one days, otherwise press enter: ")
+        #end_cl = validate_date(end_cl)
 
     if end_cl == "":
         end_cl_date = start_cl_date
     elif end_cl != "":
+        end_cl_ = validate_date(end_cl)
         end_cl_date = datetime.datetime.strptime(end_cl, "%d-%m-%Y")
 
     no_of_days = numOfDays(start_cl_date, end_cl_date)+1
@@ -293,12 +294,13 @@ def add_sick_leave(emp_no):
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("Sick leave already entered")
         return
-    end_sl = input("Enter end date: ")
-    end_sl = validate_date(end_sl)
+    end_sl = input("Enter end date or press enter for one day leave: ")
+    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
     elif end_sl != "":
+        end_sl = validate_date(end_sl)
         end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
     no_of_days = numOfDays(start_sl_date, end_sl_date)+1
@@ -430,12 +432,13 @@ def add_LOP_leave(emp_no):
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("This date has already been entered.")
         return
-    end_sl = input("Enter end date: ")
-    end_sl = validate_date(end_sl)
+    end_sl = input("Enter end date if there are more than one days, otherwise press enter: ")
+    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
     elif end_sl != "":
+        end_sl = validate_date(end_sl)
         end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
 
@@ -490,12 +493,13 @@ def add_special_leave(emp_no):
     if start_sl_date.strftime("%d-%m-%Y") in dict_sick_leave_list:
         print("Special leave already entered")
         return
-    end_sl = input("Enter end date: ")
-    end_sl = validate_date(end_sl)
+    end_sl = input("Enter end date if there are more than one days, otherwise press enter: ")
+    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
     elif end_sl != "":
+        end_sl = validate_date(end_sl)
         end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
     sick_leave_list = []
