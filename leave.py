@@ -1,5 +1,7 @@
 import json
 
+import leave_program
+
 #from pprint import pprint
 from json.decoder import JSONDecodeError
 from datetime import timedelta
@@ -871,34 +873,10 @@ Enter your choice: """)
         else:
             print("No employees present")
 
-def leave_program():
+def export_to_excel():
+    df = pd.DataFrame.from_dict({(i): d[i]
+        for i in d.keys()},
+        orient='index')
 
-    while True:
-
-        options = input("""Choose your options:
-Press 1 to display all employees and their current leave status.
-Press 2 to create a new employee master.
-Press 3 to view, modify or delete employee's records.
-Press 4 to execute new year leave replenishment.
-Press 5 to calculate current EL.
-Press 6 to export leave data to text file.
-Press 7 to generate reports.
-Press 8 to modify employee meta data.
-Press 9 to exit the program.
-Enter your option: """)
-        if options != "9":
-            keep_it_going(options)
-        else:
-            break
-
-leave_program()
-
-save_data()
-backup_data()
-
-df = pd.DataFrame.from_dict({(i): d[i]
-    for i in d.keys()},
-    orient='index')
-
-print(df)
-df.to_excel("leave-data.xlsx")
+    print(df)
+    df.to_excel("leave-data.xlsx")
