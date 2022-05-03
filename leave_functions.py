@@ -312,7 +312,8 @@ def add_sick_leave(emp_no):
         end_sl_date = datetime.datetime.strptime(end_sl, "%d-%m-%Y")
 
     no_of_days = numOfDays(start_sl_date, end_sl_date)+1
-
+    if type_SL == "full":
+        no_of_days = no_of_days * 2
     if check_leave_count(emp_no,"sick leave",no_of_days) is False:
         return
     if type_SL == "full":
@@ -570,8 +571,8 @@ def calculate_el():
 
         # if the updated date is newer than entered date, break the calculation rightaway
         if doj_datetime > cal_el_date:
-            print("Leave already updated upto: %s"  % (doj_datetime))
-            return
+            print("Leave of %s already updated upto: %s"  % (d[i]['name'], doj_datetime))
+            #return
 
         new_sick_leave_list = []
         for j in d[i]['sick leave dict']:
@@ -587,7 +588,7 @@ def calculate_el():
                 new_el_list.append(j)
         new_el_count_2 = len(new_el_list)
 
-        no_of_days = numOfDays(doj_datetime,cal_el_date)
+        no_of_days = numOfDays(doj_datetime,cal_el_date)+1
         #sick_leave_taken = len(d[i]['sick leave dict'])
 
         current_leave_count = d[i]['earned leave']
@@ -596,8 +597,8 @@ def calculate_el():
         accruedleaves = earnedleavedays / 11
         new_el_count = float(accruedleaves) + float(current_leave_count)
         new_el_count = min(new_el_count,270)
-        print(d[i]['name'],new_el_count)
-        if d[i]['Leave updated as on'] != cal_el_date:
+        #print(d[i]['name'],new_el_count)
+        if doj_datetime > cal_el_date:
             d[i]['earned leave'] = new_el_count
         d[i]['Leave updated as on'] = cal_el_date_string
     save_data()
