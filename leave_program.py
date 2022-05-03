@@ -1,4 +1,4 @@
-import leave
+import leave_functions
 
 def leave_program():
 
@@ -16,6 +16,6 @@ Press 8 to modify employee meta data.
 Press 9 to exit the program.
 Enter your option: """)
         if options != "9":
-            leave.keep_it_going(options)
+            leave_functions.keep_it_going(options)
         else:
             break

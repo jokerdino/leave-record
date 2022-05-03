@@ -1,9 +1,9 @@
 import leave_program
-import leave
+import leave_functions
 
 leave_program.leave_program()
 
-leave.save_data()
-leave.backup_data()
+leave_functions.save_data()
+leave_functions.backup_data()
 
-leave.export_to_excel()
+leave_functions.export_to_excel()
