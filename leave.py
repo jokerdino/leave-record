@@ -357,6 +357,8 @@ def leave_encashment(emp_no):
     local_dict = {}
 
     if block_year not in d[emp_no]['Leave encashment'].keys():
+        day_of_encash = input("When was the leave encashed? Enter in dd-mm-yyyy format: ")
+        #TODO: To calculate earned leave before encashing
         no_of_days = input("How many days earned leave is encashed? ")
         no_of_days = min(int(no_of_days),15)
 
@@ -531,27 +533,54 @@ def new_year_reset():
     save_data()
 
 def calculate_el():
-    today = datetime.datetime.now()
-    today_string = today.strftime("%d-%m-%Y")
+
+    print("WORD OF CAUTION. MAKE SURE ALL SICK LEAVES AND EARNED LEAVES ARE ENTERED BEFORE RUNNING FURTHER")
+    cal_el_input = input("Upto which date do you want the leaves to be calculated? Enter in dd-mm-yyyy format: ")
+    cal_el_input = validate_date(cal_el_input)
+
+    cal_el_date = datetime.datetime.strptime(cal_el_input, "%d-%m-%Y")
+    #today = datetime.datetime.now()
+    #today_string = today.strftime("%d-%m-%Y")
+    cal_el_date_string = cal_el_date.strftime("%d-%m-%Y")
 
     employeelist = d.keys()
     for i in employeelist:
 
         doj = d[i]['Leave updated as on']
         doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
-        no_of_days = numOfDays(doj_datetime,today)
-        sick_leave_taken = len(d[i]['sick leave dict'])
+
+        # if the updated date is newer than entered date, break the calculation rightaway
+        if doj_datetime > cal_el_date:
+            print("Leave already updated upto: %s"  % (doj_datetime))
+            return
+
+        new_sick_leave_list = []
+        for j in d[i]['sick leave dict']:
+            date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+            if doj_datetime < date_j and date_j < cal_el_date:
+                new_sick_leave_list.append(j)
+        new_sl_count = len(new_sick_leave_list)
+
+        new_el_list = []
+        for j in d[i]['Earned leave list']:
+            date_j = datetime.datetime.strptime(j,"%d-%m-%Y")
+            if doj_datetime < date_j and date_j < cal_el_date:
+                new_el_list.append(j)
+        new_el_count_2 = len(new_el_list)
+
+        no_of_days = numOfDays(doj_datetime,cal_el_date)
+        #sick_leave_taken = len(d[i]['sick leave dict'])
 
         current_leave_count = d[i]['earned leave']
-        earned_leave_count = len(d[i]['Earned leave list'])
-        earnedleavedays = no_of_days - int(sick_leave_taken) - earned_leave_count
+        #earned_leave_count = len(d[i]['Earned leave list'])
+        earnedleavedays = no_of_days - int(new_sl_count) - new_el_count_2
         accruedleaves = earnedleavedays / 11
         new_el_count = float(accruedleaves) + float(current_leave_count)
         new_el_count = min(new_el_count,270)
-
-        if d[i]['Leave updated as on'] != today_string:
+        print(d[i]['name'],new_el_count)
+        if d[i]['Leave updated as on'] != cal_el_date:
             d[i]['earned leave'] = new_el_count
-        d[i]['Leave updated as on'] = today_string
+        d[i]['Leave updated as on'] = cal_el_date_string
     save_data()
 
 def report_leave(date):
@@ -576,7 +605,7 @@ def report_leave_encashment():
 
     for i in emp_list:
         for j in d[i]['Leave encashment']:
-            print("%s has taken leave encashment in block year %s." % (i,j))
+            print("%s has taken leave encashment in block year %s." % (d[i]['name'],j))
 
 def report_lop(leave_type,lop_choice):
     emp_list = d.keys()
