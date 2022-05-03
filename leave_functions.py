@@ -598,7 +598,7 @@ def calculate_el():
         new_el_count = float(accruedleaves) + float(current_leave_count)
         new_el_count = min(new_el_count,270)
         #print(d[i]['name'],new_el_count)
-        if doj_datetime > cal_el_date:
+        if doj_datetime < cal_el_date:
             d[i]['earned leave'] = new_el_count
         d[i]['Leave updated as on'] = cal_el_date_string
     save_data()
