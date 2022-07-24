@@ -394,17 +394,26 @@ def leave_encashment(emp_no):
 
         day_of_encash_date = datetime.datetime.strptime(day_of_encash,"%d-%m-%Y")
         day_of_encash_string = day_of_encash_date.strftime('%d-%m-%Y')
-        #TODO: To calculate earned leave before encashing
+
         no_of_days = input("How many days earned leave is encashed? ")
         no_of_days = min(int(no_of_days),15)
 
+        day_of_encash_plus_one = day_of_encash_date + timedelta(days=1)
+        calculate_el_emp(emp_no, day_of_encash_plus_one, day_of_encash_plus_one)
+
+        doj = d[emp_no]['Leave updated as on']
+        doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
+
+        day_of_encash_string = day_of_encash_date.strftime("%d-%m-%Y")
+        d[emp_no]['Leave updated as on'] = day_of_encash_string
         if check_leave_count(emp_no,"earned leave",int(no_of_days)) is False:
             return
+
         local_dict.update({block_year: no_of_days})
         update_leave(emp_no, "earned leave",no_of_days)
         d[emp_no]['Leave encashment'].update(local_dict)
         print("Block year %s has been entered." % (block_year))
-        #TODO: Add an entry to special leave for reference
+
         local_dict_special = {day_of_encash_string: "Leave encashment"}
         d[emp_no]['Special leave list'].update(local_dict_special)
     else:
