@@ -8,8 +8,8 @@
 # 6. optimise the code - avoid DRY (dont repeat yourself)
 # 7. write a leave letter status module
 # 8. write help strings for each function for clarify and easier maintenance
-# 9. Validate for LOP and strikes
-# 10. validate for special leave type
+# 9. Validate for LOP and strikes -- done
+# 10. validate for special leave type -- done
 # 11. Move old year data to a different file to prevent clog up -- all data belonging to previous year can be moved to a different file etc
 # 12. move backup data stuff to a different folder to prevent clog up of the whole directory
 
@@ -461,7 +461,15 @@ def add_LOP_leave(emp_no):
 
     dict_sick_leave_list = d[emp_no]['LOP'].keys()
     print(dict_sick_leave_list)
-    type_SL = input("Enter whether LOP or strike: ")
+    input_type_SL = input("Enter 1 for LOP and 2 for Strike: ")
+
+    if input_type_SL == "1":
+        type_SL = "LOP"
+    elif input_type_SL == "2":
+        type_SL = "Strike"
+    else:
+        print("Received %s as input instead of 1 or 2. Assuming the entry to be LOP." %(input_type_SL))
+        type_SL = "LOP"
 
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
     start_sl = validate_date(start_sl)
@@ -521,7 +529,25 @@ def add_special_leave(emp_no):
     print("Current SL count for employee", d[emp_no]['Special leave list'])
     dict_sick_leave_list = d[emp_no]['Special leave list'].keys()
     print(dict_sick_leave_list)
-    type_SL = input("Enter the type of special leave (eg. Maternity leave, Paternity leave, Examination leave, Quantantine leave, etc): ")
+    input_type_SL = input("""Enter 1 for Maternity leave.
+    Enter 2 for Paternity leave.
+    Enter 3 for Quarantine leave.
+    Enter 4 for Examination leave.
+    Enter 5 for Others: """)
+
+    if input_type_SL == "1":
+        type_SL = "Maternity leave"
+    elif input_type_SL == "2":
+        type_SL = "Paternity leave"
+    elif input_type_SL == "3":
+        type_SL = "Quarantine leave"
+    elif input_type_SL == "4":
+        type_SL = "Examination leave"
+    elif input_type_SL == "5":
+        type_SL = "Others"
+    else:
+        print("Received %s as input instead of 1-5. Assuming the entry to be Others." %(input_type_SL))
+        type_SL = "Others"
 
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
     start_sl = validate_date(start_sl)
