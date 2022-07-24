@@ -691,19 +691,47 @@ def calculate_el():
                 new_el_list.append(j)
         new_el_count_2 = len(new_el_list)
 
-        no_of_days = numOfDays(doj_datetime,cal_el_date)+1
-        #sick_leave_taken = len(d[i]['sick leave dict'])
+        # counting number of lop
+        # LOP dict has both LOP entries and strike entries
+        new_lop_list = []
+        for j in d[i]['LOP']:
+            date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+            if doj_datetime < date_j and date_j < cal_el_date:
+                new_lop_list.append(j)
+        new_lop_count = len(new_lop_list)
+
+
+        # counting number of paternity leave and maternity leave
+        new_special_leave_list = []
+
+        for j in d[i]['Special leave list'].keys():
+            if d[i]["Special leave list"][j] == 'Maternity leave':
+
+                date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+                if doj_datetime < date_j and date_j < cal_el_date:
+                    new_special_leave_list.append(j)
+            elif d[i]['Special leave list'][j] == "Paternity leave":
+                date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+                if doj_datetime < date_j and date_j < cal_el_date:
+                    new_special_leave_list.append(j)
+
+
+        new_special_leave_count = len(new_special_leave_list)
+
+
+        no_of_days = numOfDays(doj_datetime,cal_el_date)
 
         current_leave_count = d[i]['earned leave']
-        #earned_leave_count = len(d[i]['Earned leave list'])
-        earnedleavedays = no_of_days - int(new_sl_count) - new_el_count_2
+
+        earnedleavedays = no_of_days - int(new_sl_count) - new_el_count_2 - int(new_lop_count) - int(new_special_leave_count)
+
         accruedleaves = earnedleavedays / 11
         new_el_count = float(accruedleaves) + float(current_leave_count)
         new_el_count = min(new_el_count,270)
-        #print(d[i]['name'],new_el_count)
+
         if doj_datetime < cal_el_date:
             d[i]['earned leave'] = new_el_count
-        d[i]['Leave updated as on'] = cal_el_date_string
+            d[i]['Leave updated as on'] = cal_el_date_string
     save_data()
 
 def report_leave(date):
