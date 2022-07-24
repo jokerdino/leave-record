@@ -278,10 +278,23 @@ def add_earned_leave(emp_no):
 
     end_el_date = datetime.datetime.strptime(end_el, "%d-%m-%Y")
 
-
     no_of_days = numOfDays(start_el_date, end_el_date)+1
+
+    # calculating the current leave balance before checking for sufficient leave balance
+    calculate_el_emp(emp_no, start_el_date, end_el_date)
+
+    doj = d[emp_no]['Leave updated as on']
+    doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
+
     if check_leave_count(emp_no,"earned leave",no_of_days) is False:
+        cal_one_day_before = doj_datetime + timedelta(days=-1)
+        cal_one_day_before_string = cal_one_day_before.strftime("%d-%m-%Y")
+        d[emp_no]['Leave updated as on'] = cal_one_day_before_string
         return
+
+    cal_el_date_string = end_el_date.strftime("%d-%m-%Y")
+
+    d[emp_no]['Leave updated as on'] = cal_el_date_string
 
     update_leave(emp_no, "earned leave", no_of_days)
 
@@ -561,6 +574,92 @@ def new_year_reset():
             update_leave(i, "sick leave",-30)
     save_data()
 
+def calculate_el_emp(emp_no, el_start_date, el_end_date):
+
+    # we are going to update earned leave balance of an employee just before we are going to add new earned leave
+    # this is to make sure the employee doesn't go over their 270 or something like that
+    # sick leave will not contribute to earned leave accruing
+    # same for earned leave also
+    # we will set the last update of earned leave to the final leave of earned leave hopefully
+
+    cal_el_date_string = el_start_date.strftime("%d-%m-%Y")
+
+    doj = d[emp_no]['Leave updated as on']
+    doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
+
+    # an employee will accrue earned leave when he/she is "on duty"
+    # all leaves other than casual leave, quarantine leave, examination leave and trade union leave
+    #  to be excluded when calculating earned leave
+
+    # major leaves to be discounted for calculation of earned leaves are the following:
+    # 1. sick leave
+    # 2. earned leave
+    # 3. strike
+    # 4. LOP
+    # 5. maternity leave
+    # 6. paternity leave
+
+    # counting number of sick leaves
+
+    new_sick_leave_list = []
+    for j in d[emp_no]['sick leave dict']:
+        date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+        if doj_datetime < date_j and date_j < el_start_date:
+            new_sick_leave_list.append(j)
+    new_sl_count = len(new_sick_leave_list)
+
+    # counting number of Earned leaves
+    new_el_list = []
+    for j in d[emp_no]['Earned leave list']:
+        date_j = datetime.datetime.strptime(j,"%d-%m-%Y")
+        if doj_datetime < date_j and date_j < el_start_date:
+            new_el_list.append(j)
+    new_el_count_2 = len(new_el_list)
+
+    # counting number of lop
+    # LOP dict has both LOP entries and strike entries
+    new_lop_list = []
+    for j in d[emp_no]['LOP']:
+        date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+        if doj_datetime < date_j and date_j < el_start_date:
+            new_lop_list.append(j)
+    new_lop_count = len(new_lop_list)
+
+
+    # counting number of paternity leave and maternity leave
+    new_special_leave_list = []
+
+
+    for j in d[emp_no]['Special leave list'].keys():
+        if d[emp_no]["Special leave list"][j] == 'Maternity leave':
+
+            date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+            if doj_datetime < date_j and date_j < el_start_date:
+                new_special_leave_list.append(j)
+        elif d[emp_no]['Special leave list'][j] == "Paternity leave":
+            date_j = datetime.datetime.strptime(j, "%d-%m-%Y")
+            if doj_datetime < date_j and date_j < el_start_date:
+                new_special_leave_list.append(j)
+
+    new_special_leave_count = len(new_special_leave_list)
+
+    no_of_days = numOfDays(doj_datetime,el_start_date)-1
+
+    current_leave_count = d[emp_no]['earned leave']
+
+    earnedleavedays = no_of_days - int(new_sl_count) - new_el_count_2 - int(new_lop_count) - int(new_special_leave_count)
+
+    accruedleaves = (earnedleavedays) / 11
+
+    new_el_count = float(accruedleaves) + float(current_leave_count)
+    new_el_count = min(new_el_count,270)
+
+    if doj_datetime < el_start_date:
+        d[emp_no]['earned leave'] = new_el_count
+        d[emp_no]['Leave updated as on'] = cal_el_date_string
+    print("Earned leave has been updated for employee number %s"  % (emp_no))
+    print("New earned leave %s" % (d[emp_no]['earned leave']))
+
 def calculate_el():
 
     print("WORD OF CAUTION. MAKE SURE ALL SICK LEAVES AND EARNED LEAVES ARE ENTERED BEFORE RUNNING FURTHER")
@@ -692,6 +791,7 @@ Employee name                      : %s
 Employee number                    : %s
 Current Casual leave balance       : %s
 Current EL balance                 : %s
+EL balance last updated on         : %s
 Leave encashment                   : %s.
 Current sick leave balance         : %s
 Current Restricted holiday balance : %s
@@ -702,7 +802,7 @@ List of RH                         : %s
 List of LOP                        : %s
 List of special leaves             : %s
 =========================================================================
-    """ % (d[emp_no]['name'], d[emp_no]['employee number'], d[emp_no]['casual leave'], frac_earned_leave, leave_encashment_status, d[emp_no]['sick leave'], d[emp_no]['RH'], d[emp_no]['casual leave dict'], d[emp_no]['Earned leave list'],d[emp_no]['sick leave dict'],d[emp_no]['RH list'], d[emp_no]['LOP'],d[emp_no]['Special leave list'] ))
+    """ % (d[emp_no]['name'], d[emp_no]['employee number'], d[emp_no]['casual leave'], frac_earned_leave, d[emp_no]['Leave updated as on'],leave_encashment_status, d[emp_no]['sick leave'], d[emp_no]['RH'], d[emp_no]['casual leave dict'], d[emp_no]['Earned leave list'],d[emp_no]['sick leave dict'],d[emp_no]['RH list'], d[emp_no]['LOP'],d[emp_no]['Special leave list'] ))
 
 def save_data():
     a_file = open("data.json", "w")
