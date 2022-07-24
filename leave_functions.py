@@ -187,18 +187,17 @@ def add_casual_leave(emp_no):
 
     start_cl = input("Enter start date in dd-mm-yyyy format: ")
     start_cl = validate_date(start_cl)
-    #print(start_cl.date())
+
     start_cl_date = datetime.datetime.strptime(start_cl, "%d-%m-%Y")
 
     if start_cl_date.strftime("%d-%m-%Y") in dict_casual_leave_list:
-    #if start_cl in dict_casual_leave_list:
+
         print("Casual leave already entered")
         return
     if type_CL == "half":
         end_cl = ""
     else:
         end_cl = input("Enter end date if there are more than one days, otherwise press enter: ")
-        #end_cl = validate_date(end_cl)
 
     if end_cl == "":
         end_cl_date = start_cl_date
@@ -306,8 +305,7 @@ def add_sick_leave(emp_no):
     if type_SL != "half":
         type_SL = "full"
     #TODO: Validate full or half pay input in casual leave
-    #if type_SL != "full" or "half":
-    #    type_SL = input("Enter full or half")
+
     start_sl = input("Enter start date in dd-mm-yyyy format: ")
     start_sl = validate_date(start_sl)
 
@@ -317,7 +315,6 @@ def add_sick_leave(emp_no):
         print("Sick leave already entered")
         return
     end_sl = input("Enter end date or press enter for one day leave: ")
-    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -456,7 +453,6 @@ def add_LOP_leave(emp_no):
         print("This date has already been entered.")
         return
     end_sl = input("Enter end date if there are more than one days, otherwise press enter: ")
-    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -517,7 +513,6 @@ def add_special_leave(emp_no):
         print("Special leave already entered")
         return
     end_sl = input("Enter end date if there are more than one days, otherwise press enter: ")
-    #end_sl = validate_date(end_sl)
 
     if end_sl == "":
         end_sl_date = start_sl_date
@@ -573,8 +568,7 @@ def calculate_el():
     cal_el_input = validate_date(cal_el_input)
 
     cal_el_date = datetime.datetime.strptime(cal_el_input, "%d-%m-%Y")
-    #today = datetime.datetime.now()
-    #today_string = today.strftime("%d-%m-%Y")
+
     cal_el_date_string = cal_el_date.strftime("%d-%m-%Y")
 
     employeelist = d.keys()
@@ -586,7 +580,6 @@ def calculate_el():
         # if the updated date is newer than entered date, break the calculation rightaway
         if doj_datetime > cal_el_date:
             print("Leave of %s already updated upto: %s"  % (d[i]['name'], doj_datetime))
-            #return
 
         new_sick_leave_list = []
         for j in d[i]['sick leave dict']:
@@ -727,15 +720,12 @@ def backup_data():
 
     backup_file_name = "data" + string +".json"
 
-    #json.dump(d,backup_file_name)
-    open(backup_file_name, "w") #ais f:
-    #.write(d)
+    open(backup_file_name, "w")
 
 def employeeloop(empno, choice):
 
     if choice == "1":
 
-        #print(d[empno])
         display_emp(empno)
     elif choice == "2":
         add_casual_leave(empno)
