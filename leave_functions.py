@@ -340,10 +340,7 @@ def add_sick_leave(emp_no):
         no_of_days = no_of_days * 2
     if check_leave_count(emp_no,"sick leave",no_of_days) is False:
         return
-    if type_SL == "full":
-        update_leave(emp_no, "sick leave", no_of_days*2)
-    elif type_SL == "half":
-        update_leave(emp_no, "sick leave", no_of_days)
+    update_leave(emp_no, "sick leave", no_of_days)
 
     sick_leave_list = []
 
