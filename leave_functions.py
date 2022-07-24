@@ -1,8 +1,22 @@
+# TODO:
+
+# 1. fix earned leave calculation -- done
+# 2. prettify the output
+# 3. design a useable GUI
+# 4. make the reports exportable to text file
+# 5. improve the leave record exported text file -- preferably to PDF file if possible
+# 6. optimise the code - avoid DRY (dont repeat yourself)
+# 7. write a leave letter status module
+# 8. write help strings for each function for clarify and easier maintenance
+# 9. Validate for LOP and strikes
+# 10. validate for special leave type
+# 11. Move old year data to a different file to prevent clog up -- all data belonging to previous year can be moved to a different file etc
+# 12. move backup data stuff to a different folder to prevent clog up of the whole directory
+
 import json
 
 import leave_program
 
-#from pprint import pprint
 from json.decoder import JSONDecodeError
 from datetime import timedelta
 import datetime
