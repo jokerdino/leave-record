@@ -410,7 +410,12 @@ def leave_encashment(emp_no):
         day_of_encash_string = day_of_encash_date.strftime('%d-%m-%Y')
 
         no_of_days = input("How many days earned leave is encashed? ")
-        no_of_days = min(int(no_of_days),15)
+
+        while int(no_of_days) > 15:
+        #if int(no_of_days) > 15:
+            no_of_days = input("Maximum allowed days is 15. Please recheck and enter again: ")
+
+        #no_of_days = min(int(no_of_days),15)
 
         day_of_encash_plus_one = day_of_encash_date + timedelta(days=1)
         calculate_el_emp(emp_no, day_of_encash_plus_one, day_of_encash_plus_one)
@@ -419,7 +424,10 @@ def leave_encashment(emp_no):
         doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
 
         day_of_encash_string = day_of_encash_date.strftime("%d-%m-%Y")
-        d[emp_no]['Leave updated as on'] = day_of_encash_string
+
+        if doj_datetime < day_of_encash_date:
+
+            d[emp_no]['Leave updated as on'] = day_of_encash_string
         if check_leave_count(emp_no,"earned leave",int(no_of_days)) is False:
             return
 
