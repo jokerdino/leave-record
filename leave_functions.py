@@ -47,11 +47,14 @@ def validate_employee_number():
     while True:
         print("Employees already present in database: ",  d.keys())
         employeeNumber_input = input("Enter new employee number: ")
-        if employeeNumber_input not in d.keys():
-            print("Accepted")
-            return employeeNumber_input
+        if employeeNumber_input.isnumeric():
+            if employeeNumber_input not in d.keys():
+                print("Accepted")
+                return employeeNumber_input
+            else:
+                print("Employee number already exists. Enter unique employee number.")
         else:
-            print("Employee number already exists. Enter unique employee number.")
+            print("Please enter numbers only.")
 
 def validate_date(date):
 
