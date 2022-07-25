@@ -138,7 +138,12 @@ def update_leave(emp_no, leave_type, no_of_days):
 
     d[emp_no][leave_type] = newbalance
     save_data()
-    print("%s has been updated. New balance: %s" % (leave_type, newbalance))
+    if leave_type != "earned leave":
+
+        print("%s has been updated. New balance: %s" % (leave_type, newbalance))
+    elif leave_type == "earned leave":
+        mixed_frac = dec_to_proper_frac(emp_no)
+        print("%s has been updated. New balance: %s" % (leave_type, mixed_frac))
 
 def del_casual_leave(emp_no):
 
@@ -262,8 +267,13 @@ def del_list_leave(emp_no, leave_type, leave_list):
     print("%s %s has been deleted." % (leave_type, delete_leave))
 
 def add_earned_leave(emp_no):
-    print(d[emp_no]['earned leave'])
-    print(d[emp_no]['Earned leave list'])
+
+    #mixed_frac = dec_to_proper_frac(emp_no)
+
+    #print(mixed_frac)
+    #print(d[emp_no]['earned leave'])
+    print("Already entered earned leave for the employee is as follows: ",d[emp_no]['Earned leave list'])
+
 
     earned_leave_list_string = d[emp_no]['Earned leave list']
     earned_leave_list = []
@@ -301,7 +311,7 @@ def add_earned_leave(emp_no):
 
     update_leave(emp_no, "earned leave", no_of_days)
 
-    print(no_of_days)
+    #print(no_of_days)
     for dt in daterange(start_el_date, end_el_date):
         earned_leave_list.append(dt)
     for dt in earned_leave_list:
@@ -309,7 +319,7 @@ def add_earned_leave(emp_no):
         earned_leave_list_string.append(date_string)
     d[emp_no]['Earned leave list'] = earned_leave_list_string
     save_data()
-    print("Earned leave has been added.")
+    #print("Earned leave has been added.")
 
 def add_sick_leave(emp_no):
 
@@ -387,7 +397,8 @@ def del_sick_leave(emp_no):
 
 def leave_encashment(emp_no):
 
-    print("Current earned leave count for %s is %s" % (emp_no, d[emp_no]['earned leave']))
+    mixed_frac = dec_to_proper_frac(emp_no)
+    print("Current earned leave count for %s is %s" % (emp_no, mixed_frac))
     block_year = input("Block year for which leave is being encashed (Enter in YYYY-YYYY format - eg. 2022-2023): ")
     local_dict = {}
 
@@ -692,8 +703,9 @@ def calculate_el_emp(emp_no, el_start_date, el_end_date):
     if doj_datetime < el_start_date:
         d[emp_no]['earned leave'] = new_el_count
         d[emp_no]['Leave updated as on'] = cal_el_date_string
-    print("Earned leave has been updated for employee number %s"  % (emp_no))
-    print("New earned leave %s" % (d[emp_no]['earned leave']))
+    #mixed_frac = dec_to_proper_frac(emp_no)
+    #print("Earned leave has been updated for employee number %s. New balance: %s"  % (emp_no,mixed_frac))
+    #print("New earned leave %s" % (d[emp_no]['earned leave']))
 
 def calculate_el():
 
