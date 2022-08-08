@@ -708,12 +708,15 @@ def calculate_el_emp(emp_no, el_start_date, el_end_date):
     new_el_count = float(accruedleaves) + float(current_leave_count)
     new_el_count = min(new_el_count,270)
 
+
     if doj_datetime < el_start_date:
         d[emp_no]['earned leave'] = new_el_count
         d[emp_no]['Leave updated as on'] = cal_el_date_string
-    #mixed_frac = dec_to_proper_frac(emp_no)
-    #print("Earned leave has been updated for employee number %s. New balance: %s"  % (emp_no,mixed_frac))
-    #print("New earned leave %s" % (d[emp_no]['earned leave']))
+        frac_earned_leave = dec_to_proper_frac(emp_no)
+        print("Earned leave has been updated for employee number %s up to %s. Updated earned leave balance: %s."
+                %(emp_no, cal_el_date_string, frac_earned_leave))
+    else:
+        print("Earned leave has already been updated until %s" % doj_datetime)
 
 def calculate_el():
 
@@ -733,7 +736,7 @@ def calculate_el():
 
         # if the updated date is newer than entered date, break the calculation rightaway
         if doj_datetime > cal_el_date:
-            print("Leave of %s already updated upto: %s"  % (d[i]['name'], doj_datetime))
+            print("Leave of %s already updated upto: %s"  % (d[i]['name'], doj))
 
         new_sick_leave_list = []
         for j in d[i]['sick leave dict']:
@@ -790,7 +793,16 @@ def calculate_el():
         if doj_datetime < cal_el_date:
             d[i]['earned leave'] = new_el_count
             d[i]['Leave updated as on'] = cal_el_date_string
+
+            frac_earned_leave = dec_to_proper_frac(i)
+            print("Earned leave has been updated for employee number %s up to %s. Updated earned leave balance: %s."
+                %(i, cal_el_date_string, frac_earned_leave))
+#        else:
+ #           print("Earned leave has already been updated until %s" % doj_datetime)
+
+
     save_data()
+
 
 def report_leave(date):
 
@@ -920,6 +932,19 @@ def employeeloop(empno, choice):
         add_sick_leave(empno)
     elif choice == "8":
         export_to_text(empno)
+    elif choice == "9":
+        # calculate earned leave for the employee number here
+
+        start_el = input("Enter date up to which earned leave to be calculated for the employee in dd-mm-yyyy format: ")
+
+        # validate input
+
+        start_el = validate_date(start_el)
+
+        start_el_date = datetime.datetime.strptime(start_el, "%d-%m-%Y")
+        calculate_el_emp(empno, start_el_date, start_el_date)
+       # frac_earned_leave = dec_to_proper_frac(empno)
+    #    print("Earned leave has been updated for employee number %s up to %s. Updated earned leave balance: %s" %(empno, start_el, frac_earned_leave))
     elif choice == "5":
         leave_input = input("""
  Press 1 to enter leave encashment.
@@ -1048,7 +1073,7 @@ Enter your choice: """)
         if (len(d) != 0):
             emp_no = req_emp_no()
             while True:
-                newoptions = input("""
+                newoptions = input("""===============================================================================
   Press 1 to view current leave status.
   Press 2 to enter casual leave.
   Press 3 to enter earned leave.
@@ -1057,12 +1082,13 @@ Enter your choice: """)
   Press 6 to delete already entered casual, earned, sick leave or RH.
   Press 7 to delete the employee.
   Press 8 to export data to text file.
-  Press 9 to return back to main menu.
+  Press 9 to calculate earned leave for the employee.
+  Press 10 to return back to main menu.
 Enter your choice: """)
                 if newoptions == "7":
                     delete_employee(emp_no)
                     return
-                elif newoptions != "9":
+                elif newoptions != "10":
                     employeeloop(emp_no, newoptions)
                 else:
                     break
