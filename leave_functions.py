@@ -903,7 +903,9 @@ def backup_data():
 
     backup_file_name = "data" + string +".json"
 
-    open(backup_file_name, "w")
+    backup_file = open(backup_file_name, "w")
+    json.dump(d,backup_file)
+    backup_file.close()
 
 def employeeloop(empno, choice):
 
