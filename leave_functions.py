@@ -294,7 +294,7 @@ def add_earned_leave(emp_no):
     no_of_days = numOfDays(start_el_date, end_el_date)+1
 
     # calculating the current leave balance before checking for sufficient leave balance
-    calculate_el_emp(emp_no, start_el_date, end_el_date)
+    calculate_el_emp(emp_no, start_el_date, end_el_date,True)
 
     doj = d[emp_no]['Leave updated as on']
     doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
@@ -418,7 +418,7 @@ def leave_encashment(emp_no):
         #no_of_days = min(int(no_of_days),15)
 
         day_of_encash_plus_one = day_of_encash_date + timedelta(days=1)
-        calculate_el_emp(emp_no, day_of_encash_plus_one, day_of_encash_plus_one)
+        calculate_el_emp(emp_no, day_of_encash_plus_one, day_of_encash_plus_one,True)
 
         doj = d[emp_no]['Leave updated as on']
         doj_datetime = datetime.datetime.strptime(doj, "%d-%m-%Y")
@@ -628,7 +628,7 @@ def new_year_reset():
             update_leave(i, "sick leave",-30)
     save_data()
 
-def calculate_el_emp(emp_no, el_start_date, el_end_date):
+def calculate_el_emp(emp_no, el_start_date, el_end_date,notfromthere):
 
     # we are going to update earned leave balance of an employee just before we are going to add new earned leave
     # this is to make sure the employee doesn't go over their 270 or something like that
@@ -697,7 +697,11 @@ def calculate_el_emp(emp_no, el_start_date, el_end_date):
 
     new_special_leave_count = len(new_special_leave_list)
 
-    no_of_days = numOfDays(doj_datetime,el_start_date)-1
+    if notfromthere:
+        no_of_days = numOfDays(doj_datetime,el_start_date)-1
+
+    else:
+        no_of_days = numOfDays(doj_datetime,el_start_date)
 
     current_leave_count = d[emp_no]['earned leave']
 
@@ -942,9 +946,7 @@ def employeeloop(empno, choice):
         start_el = validate_date(start_el)
 
         start_el_date = datetime.datetime.strptime(start_el, "%d-%m-%Y")
-        calculate_el_emp(empno, start_el_date, start_el_date)
-       # frac_earned_leave = dec_to_proper_frac(empno)
-    #    print("Earned leave has been updated for employee number %s up to %s. Updated earned leave balance: %s" %(empno, start_el, frac_earned_leave))
+        calculate_el_emp(empno, start_el_date, start_el_date,False)
     elif choice == "5":
         leave_input = input("""
  Press 1 to enter leave encashment.
