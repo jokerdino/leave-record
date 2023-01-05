@@ -616,12 +616,21 @@ def req_emp_no():
                 return user_input
 
 def new_year_reset():
+
+    # export data of all employees to text file
+    # reset RH list
+    # reset casual leave dictionary
+
     employeelist = d.keys()
+
     for i in employeelist:
+
+        export_to_text(i)
 
         d[i]['casual leave'] = 12
         d[i]['casual leave dict'] = {}
         d[i]['RH'] = 2
+        d[i]['RH list'] = []
         if (int(d[i]['sick leave']) + 30) > 240:
             d[i]['sick leave'] = 240
         else:
